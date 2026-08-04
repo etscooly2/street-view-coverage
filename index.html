@@ -270,9 +270,9 @@
   <header>
     <h1>World Percentage Dashboard</h1>
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('map-view')">Map View</button>
-      <button class="tab-btn" onclick="switchTab('list-view')">Countries List</button>
-      <button class="tab-btn" onclick="switchTab('percent-view')">% World Summary</button>
+      <button class="tab-btn active" onclick="switchTab('map-view', event)">Map View</button>
+      <button class="tab-btn" onclick="switchTab('list-view', event)">Countries List</button>
+      <button class="tab-btn" onclick="switchTab('percent-view', event)">% World Summary</button>
     </div>
   </header>
 
@@ -494,13 +494,18 @@
       document.getElementById('zeroCount').innerText = countryData.filter(c => c.percentage === 0).length;
     }
 
-    function switchTab(tabId) {
+    function switchTab(tabId, evt) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      event.target.classList.add('active');
+      if (evt && evt.target) {
+        evt.target.classList.add('active');
+      }
+
       const activeContent = document.getElementById(tabId);
-      activeContent.classList.add('active');
+      if (activeContent) {
+        activeContent.classList.add('active');
+      }
 
       if (tabId === 'map-view' && map) {
         setTimeout(() => { map.invalidateSize(); }, 100);
