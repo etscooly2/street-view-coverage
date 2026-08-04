@@ -192,110 +192,117 @@
     <script>
         // Comprehensive List of Official Google Street View Countries & Territories
         const countryData = {
-            // North America
-            "United States of America": { score: 95, updated: "2026", iso: "USA" },
-            "Canada": { score: 70, updated: "2026", iso: "CAN" },
-            "Mexico": { score: 75, updated: "2026", iso: "MEX" },
-
-            // Central America & Caribbean
-            "Guatemala": { score: 40, updated: "2025", iso: "GTM" },
-            "Dominican Republic": { score: 50, updated: "2025", iso: "DOM" },
-            "Puerto Rico": { score: 85, updated: "2026", iso: "PRI" },
-            "Panama": { score: 45, updated: "2025", iso: "PAN" },
-            "Costa Rica": { score: 35, updated: "2024", iso: "CRI" },
+            // North America & Caribbean
+            "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
+            "Canada": { score: 75, updated: "2026", iso: "CAN", aliases: ["Canada"] },
+            "Mexico": { score: 75, updated: "2026", iso: "MEX", aliases: ["Mexico"] },
+            "Guatemala": { score: 40, updated: "2025", iso: "GTM", aliases: ["Guatemala"] },
+            "Dominican Republic": { score: 50, updated: "2025", iso: "DOM", aliases: ["Dominican Republic"] },
+            "Puerto Rico": { score: 85, updated: "2026", iso: "PRI", aliases: ["Puerto Rico"] },
+            "Panama": { score: 45, updated: "2025", iso: "PAN", aliases: ["Panama"] },
+            "Costa Rica": { score: 35, updated: "2024", iso: "CRI", aliases: ["Costa Rica"] },
+            "Curaçao": { score: 70, updated: "2024", iso: "CUW", aliases: ["Curacao", "Curaçao"] },
+            "Bermuda": { score: 80, updated: "2024", iso: "BMU", aliases: ["Bermuda"] },
+            "Greenland": { score: 30, updated: "2024", iso: "GRL", aliases: ["Greenland"] },
 
             // South America
-            "Argentina": { score: 65, updated: "2026", iso: "ARG" },
-            "Brazil": { score: 60, updated: "2026", iso: "BRA" },
-            "Chile": { score: 70, updated: "2026", iso: "CHL" },
-            "Colombia": { score: 55, updated: "2025", iso: "COL" },
-            "Ecuador": { score: 45, updated: "2025", iso: "ECU" },
-            "Peru": { score: 50, updated: "2025", iso: "PER" },
-            "Uruguay": { score: 65, updated: "2025", iso: "URY" },
-            "Bolivia": { score: 35, updated: "2024", iso: "BOL" },
+            "Argentina": { score: 65, updated: "2026", iso: "ARG", aliases: ["Argentina"] },
+            "Brazil": { score: 60, updated: "2026", iso: "BRA", aliases: ["Brazil"] },
+            "Chile": { score: 70, updated: "2026", iso: "CHL", aliases: ["Chile"] },
+            "Colombia": { score: 55, updated: "2025", iso: "COL", aliases: ["Colombia"] },
+            "Ecuador": { score: 45, updated: "2025", iso: "ECU", aliases: ["Ecuador"] },
+            "Peru": { score: 50, updated: "2025", iso: "PER", aliases: ["Peru"] },
+            "Uruguay": { score: 65, updated: "2025", iso: "URY", aliases: ["Uruguay"] },
+            "Bolivia": { score: 35, updated: "2024", iso: "BOL", aliases: ["Bolivia"] },
 
             // Europe
-            "Albania": { score: 50, updated: "2026", iso: "ALB" },
-            "Andorra": { score: 95, updated: "2025", iso: "AND" },
-            "Austria": { score: 70, updated: "2026", iso: "AUT" },
-            "Belgium": { score: 90, updated: "2026", iso: "BEL" },
-            "Bulgaria": { score: 80, updated: "2026", iso: "BGR" },
-            "Croatia": { score: 85, updated: "2026", iso: "HRV" },
-            "Czech Republic": { score: 88, updated: "2026", iso: "CZE" },
-            "Denmark": { score: 92, updated: "2026", iso: "DNK" },
-            "Estonia": { score: 90, updated: "2026", iso: "EST" },
-            "Finland": { score: 88, updated: "2026", iso: "FIN" },
-            "France": { score: 90, updated: "2026", iso: "FRA" },
-            "Germany": { score: 70, updated: "2026", iso: "DEU" },
-            "Greece": { score: 82, updated: "2026", iso: "GRC" },
-            "Hungary": { score: 85, updated: "2026", iso: "HUN" },
-            "Iceland": { score: 75, updated: "2025", iso: "ISL" },
-            "Ireland": { score: 88, updated: "2026", iso: "IRL" },
-            "Italy": { score: 88, updated: "2026", iso: "ITA" },
-            "Latvia": { score: 85, updated: "2026", iso: "LVA" },
-            "Lithuania": { score: 85, updated: "2026", iso: "LTU" },
-            "Luxembourg": { score: 90, updated: "2026", iso: "LUX" },
-            "Malta": { score: 92, updated: "2025", iso: "MLT" },
-            "Monaco": { score: 98, updated: "2026", iso: "MCO" },
-            "Montenegro": { score: 65, updated: "2025", iso: "MNE" },
-            "Netherlands": { score: 95, updated: "2026", iso: "NLD" },
-            "North Macedonia": { score: 60, updated: "2025", iso: "MKD" },
-            "Norway": { score: 85, updated: "2026", iso: "NOR" },
-            "Poland": { score: 88, updated: "2026", iso: "POL" },
-            "Portugal": { score: 90, updated: "2026", iso: "PRT" },
-            "Romania": { score: 82, updated: "2026", iso: "ROU" },
-            "San Marino": { score: 95, updated: "2025", iso: "SMR" },
-            "Serbia": { score: 70, updated: "2026", iso: "SRB" },
-            "Slovakia": { score: 85, updated: "2026", iso: "SVK" },
-            "Slovenia": { score: 85, updated: "2026", iso: "SVN" },
-            "Spain": { score: 92, updated: "2026", iso: "ESP" },
-            "Sweden": { score: 88, updated: "2026", iso: "SWE" },
-            "Switzerland": { score: 90, updated: "2026", iso: "CHE" },
-            "United Kingdom": { score: 95, updated: "2026", iso: "GBR" },
-            "Ukraine": { score: 45, updated: "2024", iso: "UKR" },
+            "Albania": { score: 55, updated: "2026", iso: "ALB", aliases: ["Albania"] },
+            "Andorra": { score: 95, updated: "2025", iso: "AND", aliases: ["Andorra"] },
+            "Austria": { score: 70, updated: "2026", iso: "AUT", aliases: ["Austria"] },
+            "Belgium": { score: 90, updated: "2026", iso: "BEL", aliases: ["Belgium"] },
+            "Bulgaria": { score: 80, updated: "2026", iso: "BGR", aliases: ["Bulgaria"] },
+            "Croatia": { score: 85, updated: "2026", iso: "HRV", aliases: ["Croatia"] },
+            "Czech Republic": { score: 88, updated: "2026", iso: "CZE", aliases: ["Czech Republic", "Czechia"] },
+            "Denmark": { score: 92, updated: "2026", iso: "DNK", aliases: ["Denmark"] },
+            "Estonia": { score: 90, updated: "2026", iso: "EST", aliases: ["Estonia"] },
+            "Finland": { score: 88, updated: "2026", iso: "FIN", aliases: ["Finland"] },
+            "France": { score: 90, updated: "2026", iso: "FRA", aliases: ["France"] },
+            "Germany": { score: 70, updated: "2026", iso: "DEU", aliases: ["Germany"] },
+            "Greece": { score: 82, updated: "2026", iso: "GRC", aliases: ["Greece"] },
+            "Hungary": { score: 85, updated: "2026", iso: "HUN", aliases: ["Hungary"] },
+            "Iceland": { score: 75, updated: "2025", iso: "ISL", aliases: ["Iceland"] },
+            "Ireland": { score: 88, updated: "2026", iso: "IRL", aliases: ["Ireland"] },
+            "Italy": { score: 88, updated: "2026", iso: "ITA", aliases: ["Italy"] },
+            "Kosovo": { score: 60, updated: "2026", iso: "RKS", aliases: ["Kosovo", "Republic of Kosovo", "XKX"] },
+            "Latvia": { score: 85, updated: "2026", iso: "LVA", aliases: ["Latvia"] },
+            "Liechtenstein": { score: 80, updated: "2025", iso: "LIE", aliases: ["Liechtenstein"] },
+            "Lithuania": { score: 85, updated: "2026", iso: "LTU", aliases: ["Lithuania"] },
+            "Luxembourg": { score: 90, updated: "2026", iso: "LUX", aliases: ["Luxembourg"] },
+            "Malta": { score: 92, updated: "2025", iso: "MLT", aliases: ["Malta"] },
+            "Monaco": { score: 98, updated: "2026", iso: "MCO", aliases: ["Monaco"] },
+            "Montenegro": { score: 65, updated: "2025", iso: "MNE", aliases: ["Montenegro"] },
+            "Netherlands": { score: 95, updated: "2026", iso: "NLD", aliases: ["Netherlands"] },
+            "North Macedonia": { score: 60, updated: "2025", iso: "MKD", aliases: ["Macedonia", "North Macedonia", "FYROM"] },
+            "Norway": { score: 85, updated: "2026", iso: "NOR", aliases: ["Norway"] },
+            "Poland": { score: 88, updated: "2026", iso: "POL", aliases: ["Poland"] },
+            "Portugal": { score: 90, updated: "2026", iso: "PRT", aliases: ["Portugal"] },
+            "Romania": { score: 82, updated: "2026", iso: "ROU", aliases: ["Romania"] },
+            "Russia": { score: 40, updated: "2022", iso: "RUS", aliases: ["Russia", "Russian Federation"] },
+            "San Marino": { score: 95, updated: "2025", iso: "SMR", aliases: ["San Marino"] },
+            "Serbia": { score: 70, updated: "2026", iso: "SRB", aliases: ["Serbia", "Republic of Serbia"] },
+            "Slovakia": { score: 85, updated: "2026", iso: "SVK", aliases: ["Slovakia"] },
+            "Slovenia": { score: 85, updated: "2026", iso: "SVN", aliases: ["Slovenia"] },
+            "Spain": { score: 92, updated: "2026", iso: "ESP", aliases: ["Spain"] },
+            "Sweden": { score: 88, updated: "2026", iso: "SWE", aliases: ["Sweden"] },
+            "Switzerland": { score: 90, updated: "2026", iso: "CHE", aliases: ["Switzerland"] },
+            "United Kingdom": { score: 95, updated: "2026", iso: "GBR", aliases: ["United Kingdom", "UK", "Great Britain"] },
+            "Ukraine": { score: 45, updated: "2024", iso: "UKR", aliases: ["Ukraine"] },
 
             // Asia & Middle East
-            "Israel": { score: 85, updated: "2026", iso: "ISR" },
-            "Jordan": { score: 40, updated: "2025", iso: "JOR" },
-            "United Arab Emirates": { score: 75, updated: "2026", iso: "ARE" },
-            "Qatar": { score: 80, updated: "2026", iso: "QAT" },
-            "Oman": { score: 35, updated: "2025", iso: "OMN" },
-            "Japan": { score: 95, updated: "2026", iso: "JPN" },
-            "South Korea": { score: 85, updated: "2026", iso: "KOR" },
-            "Taiwan": { score: 90, updated: "2026", iso: "TWN" },
-            "Singapore": { score: 98, updated: "2026", iso: "SGP" },
-            "Malaysia": { score: 75, updated: "2026", iso: "MYS" },
-            "Thailand": { score: 80, updated: "2026", iso: "THA" },
-            "Indonesia": { score: 65, updated: "2026", iso: "IDN" },
-            "Philippines": { score: 60, updated: "2026", iso: "PHL" },
-            "Vietnam": { score: 30, updated: "2025", iso: "VNM" },
-            "Cambodia": { score: 40, updated: "2024", iso: "KHM" },
-            "Sri Lanka": { score: 60, updated: "2025", iso: "LKA" },
-            "Bangladesh": { score: 45, updated: "2025", iso: "BGD" },
-            "India": { score: 55, updated: "2026", iso: "IND" },
-            "Mongolia": { score: 35, updated: "2024", iso: "MNG" },
-            "Kazakhstan": { score: 40, updated: "2026", iso: "KAZ" },
-            "Kyrgyzstan": { score: 45, updated: "2025", iso: "KGZ" },
-            "Turkey": { score: 70, updated: "2026", iso: "TUR" },
-            "Bhutan": { score: 40, updated: "2024", iso: "BTN" },
+            "Israel": { score: 85, updated: "2026", iso: "ISR", aliases: ["Israel"] },
+            "Jordan": { score: 40, updated: "2025", iso: "JOR", aliases: ["Jordan"] },
+            "United Arab Emirates": { score: 75, updated: "2026", iso: "ARE", aliases: ["United Arab Emirates", "UAE"] },
+            "Qatar": { score: 80, updated: "2026", iso: "QAT", aliases: ["Qatar"] },
+            "Oman": { score: 35, updated: "2025", iso: "OMN", aliases: ["Oman"] },
+            "Japan": { score: 95, updated: "2026", iso: "JPN", aliases: ["Japan"] },
+            "South Korea": { score: 85, updated: "2026", iso: "KOR", aliases: ["South Korea", "Korea", "Republic of Korea"] },
+            "Taiwan": { score: 90, updated: "2026", iso: "TWN", aliases: ["Taiwan"] },
+            "Singapore": { score: 98, updated: "2026", iso: "SGP", aliases: ["Singapore"] },
+            "Malaysia": { score: 75, updated: "2026", iso: "MYS", aliases: ["Malaysia"] },
+            "Thailand": { score: 80, updated: "2026", iso: "THA", aliases: ["Thailand"] },
+            "Indonesia": { score: 65, updated: "2026", iso: "IDN", aliases: ["Indonesia"] },
+            "Philippines": { score: 60, updated: "2026", iso: "PHL", aliases: ["Philippines"] },
+            "Vietnam": { score: 30, updated: "2025", iso: "VNM", aliases: ["Vietnam"] },
+            "Cambodia": { score: 40, updated: "2024", iso: "KHM", aliases: ["Cambodia"] },
+            "Sri Lanka": { score: 60, updated: "2025", iso: "LKA", aliases: ["Sri Lanka"] },
+            "Bangladesh": { score: 45, updated: "2025", iso: "BGD", aliases: ["Bangladesh"] },
+            "India": { score: 55, updated: "2026", iso: "IND", aliases: ["India"] },
+            "Mongolia": { score: 35, updated: "2024", iso: "MNG", aliases: ["Mongolia"] },
+            "Kazakhstan": { score: 40, updated: "2026", iso: "KAZ", aliases: ["Kazakhstan"] },
+            "Kyrgyzstan": { score: 45, updated: "2025", iso: "KGZ", aliases: ["Kyrgyzstan"] },
+            "Turkey": { score: 70, updated: "2026", iso: "TUR", aliases: ["Turkey", "Türkiye"] },
+            "Bhutan": { score: 40, updated: "2024", iso: "BTN", aliases: ["Bhutan"] },
 
             // Africa
-            "South Africa": { score: 65, updated: "2026", iso: "ZAF" },
-            "Lesotho": { score: 45, updated: "2024", iso: "LSO" },
-            "Swaziland": { score: 45, updated: "2024", iso: "SWZ" }, // Eswatini
-            "Botswana": { score: 40, updated: "2024", iso: "BWA" },
-            "Kenya": { score: 45, updated: "2025", iso: "KEN" },
-            "Nigeria": { score: 40, updated: "2025", iso: "NGA" },
-            "Senegal": { score: 35, updated: "2025", iso: "SEN" },
-            "Ghana": { score: 40, updated: "2025", iso: "GHA" },
-            "Uganda": { score: 30, updated: "2024", iso: "UGA" },
-            "Rwanda": { score: 35, updated: "2025", iso: "RWA" },
-            "Tunisia": { score: 40, updated: "2025", iso: "TUN" },
-            "Madagascar": { score: 20, updated: "2024", iso: "MDG" },
+            "South Africa": { score: 65, updated: "2026", iso: "ZAF", aliases: ["South Africa"] },
+            "Lesotho": { score: 45, updated: "2024", iso: "LSO", aliases: ["Lesotho"] },
+            "Eswatini": { score: 45, updated: "2024", iso: "SWZ", aliases: ["Eswatini", "Swaziland"] },
+            "Botswana": { score: 40, updated: "2024", iso: "BWA", aliases: ["Botswana"] },
+            "Kenya": { score: 45, updated: "2025", iso: "KEN", aliases: ["Kenya"] },
+            "Nigeria": { score: 40, updated: "2025", iso: "NGA", aliases: ["Nigeria"] },
+            "Senegal": { score: 35, updated: "2025", iso: "SEN", aliases: ["Senegal"] },
+            "Ghana": { score: 40, updated: "2025", iso: "GHA", aliases: ["Ghana"] },
+            "Uganda": { score: 30, updated: "2024", iso: "UGA", aliases: ["Uganda"] },
+            "Rwanda": { score: 35, updated: "2025", iso: "RWA", aliases: ["Rwanda"] },
+            "Tunisia": { score: 40, updated: "2025", iso: "TUN", aliases: ["Tunisia"] },
+            "Madagascar": { score: 20, updated: "2024", iso: "MDG", aliases: ["Madagascar"] },
 
             // Oceania
-            "Australia": { score: 85, updated: "2026", iso: "AUS" },
-            "New Zealand": { score: 88, updated: "2026", iso: "NZL" }
+            "Australia": { score: 85, updated: "2026", iso: "AUS", aliases: ["Australia"] },
+            "New Zealand": { score: 88, updated: "2026", iso: "NZL", aliases: ["New Zealand"] },
+            "Guam": { score: 80, updated: "2024", iso: "GUM", aliases: ["Guam"] },
+            "Northern Mariana Islands": { score: 75, updated: "2024", iso: "MNP", aliases: ["Northern Mariana Islands"] },
+            "American Samoa": { score: 70, updated: "2024", iso: "ASM", aliases: ["American Samoa"] }
         };
 
         // Color Scale Function
@@ -327,13 +334,13 @@
         // Matches GeoJSON country name or ISO to our dataset
         function findCountryData(feature) {
             const name = feature.properties.name;
-            const id = feature.id || feature.properties.iso_a3;
+            const id = feature.id || feature.properties.iso_a3 || feature.properties.ISO_A3;
 
             if (countryData[name]) return countryData[name];
 
-            // ISO / Alternative name fallback search
+            // Search by ISO or Aliases
             for (const [key, val] of Object.entries(countryData)) {
-                if (val.iso === id || key.toLowerCase() === name.toLowerCase()) {
+                if (val.iso === id || (val.aliases && val.aliases.some(alias => alias.toLowerCase() === name.toLowerCase()))) {
                     return val;
                 }
             }
@@ -378,7 +385,7 @@
 
             // Tooltip displaying Country Name & Score
             layer.bindTooltip(
-                `<strong>${name}</strong><br/>Score: ${scoreText}`,
+                `<strong>${name}</strong><br/>Coverage: ${scoreText}`,
                 { className: 'leaflet-tooltip-custom', sticky: true }
             );
 
@@ -391,7 +398,7 @@
             });
         }
 
-        // Load GeoJSON World Boundaries
+        // Load GeoJSON World Boundaries (Includes Kosovo & high detail boundaries)
         fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
             .then(response => response.json())
             .then(data => {
@@ -408,7 +415,12 @@
             listContainer.innerHTML = '';
 
             const entries = Object.entries(countryData)
-                .filter(([name]) => name.toLowerCase().includes(filterText.toLowerCase()))
+                .filter(([name, data]) => {
+                    const searchStr = filterText.toLowerCase();
+                    const nameMatch = name.toLowerCase().includes(searchStr);
+                    const aliasMatch = data.aliases && data.aliases.some(a => a.toLowerCase().includes(searchStr));
+                    return nameMatch || aliasMatch;
+                })
                 .sort((a, b) => b[1].score - a[1].score);
 
             entries.forEach(([name, data]) => {
