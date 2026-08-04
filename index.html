@@ -104,7 +104,6 @@
       flex-shrink: 0;
     }
 
-    /* Info Card Styling */
     .info-header {
       display: flex;
       justify-content: space-between;
@@ -166,7 +165,6 @@
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Tooltip Customization */
     .leaflet-tooltip.country-tooltip {
       background: #0f172a;
       border: 1px solid #38bdf8;
@@ -264,6 +262,54 @@
 
     // Complete Database of official Google Street View coverage as of 2026
     const streetViewData = {
+      // EUROPE & BALKANS (Including Kosovo & Regional ISO variants)
+      "XKX": { covered: true, pct: 78, status: "Official Coverage (2026)", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "KOS": { covered: true, pct: 78, status: "Official Coverage (2026)", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "ALB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Hatchback", dots: "Active" },
+      "AND": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "AUT": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "BEL": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "BIH": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "BGR": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "HRV": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "CZE": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "DNK": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "EST": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "FRO": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car / Sheep View", dots: "Active" },
+      "FIN": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "FRA": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "DEU": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "GIB": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "GRC": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "HUN": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "ISL": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "IRL": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "ITA": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "LVA": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "LIE": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "LTU": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "LUX": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "MLT": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "MCO": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "MNE": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "NLD": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "MKD": { covered: true, pct: 60, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "NOR": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "POL": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "PRT": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "ROU": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "RUS": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "SMR": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "SRB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "SVK": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "SVN": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "ESP": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "SWE": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "CHE": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "UKR": { covered: true, pct: 68, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "GBR": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "BLR": { covered: true, pct: 20, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+
       // NORTH AMERICA & CARIBBEAN
       "USA": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Trekker Car", dots: "Active" },
       "CAN": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Pickup / SUV", dots: "Active" },
@@ -291,54 +337,6 @@
       "BOL": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
       "PRY": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
       "URY": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-
-      // EUROPE & NORTHERN EURASIA
-      "ALB": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Hatchback", dots: "Active" },
-      "AND": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "AUT": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "BEL": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "BIH": { covered: true, pct: 40, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "BGR": { covered: true, pct: 82, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "HRV": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "CZE": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "DNK": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "EST": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "FRO": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car / Sheep View", dots: "Active" },
-      "FIN": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "FRA": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "DEU": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "GIB": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GRC": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "HUN": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ISL": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "IRL": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ITA": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "LVA": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LIE": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LTU": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LUX": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "MLT": { pct: 90, covered: true, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MCO": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MNE": { covered: true, pct: 60, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NLD": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "MKD": { covered: true, pct: 55, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NOR": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "POL": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "PRT": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ROU": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "RUS": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "SMR": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SRB": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SVK": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "SVN": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "ESP": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "SWE": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "CHE": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "UKR": { covered: true, pct: 68, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GBR": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "XKX": { covered: true, pct: 62, status: "Official Coverage", car: "Yes", vehicle: "Standard Hatchback", dots: "Active" },
-      "KOS": { covered: true, pct: 62, status: "Official Coverage", car: "Yes", vehicle: "Standard Hatchback", dots: "Active" },
-      "BLR": { covered: true, pct: 20, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
 
       // ASIA & MIDDLE EAST
       "JPN": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Compact", dots: "Active" },
@@ -400,20 +398,18 @@
       "NPL": { covered: false, isLandmark: true, pct: 12, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" }
     };
 
-    // Color logic
     function getFeatureColor(iso) {
       const data = streetViewData[iso];
       if (data) {
-        if (data.covered) return '#0088ff';      // Bright Blue (Official Coverage)
-        if (data.isLandmark) return '#f59e0b';   // Amber Yellow (Landmarks)
+        if (data.covered) return '#0088ff';
+        if (data.isLandmark) return '#f59e0b';
       }
-      return '#1e293b';                          // Dark Grey (No Coverage)
+      return '#1e293b';
     }
 
     let geojsonLayer;
     let selectedLayer = null;
 
-    // Fetch world GeoJSON boundaries
     fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
       .then(res => res.json())
       .then(geoJsonData => {
@@ -440,14 +436,12 @@
               dots: "Sparse" 
             };
 
-            // Bind Hover Tooltip
             layer.bindTooltip(`<b>${countryName}</b><br>${data.status}`, {
               className: 'country-tooltip',
               direction: 'top',
               sticky: true
             });
 
-            // Layer Hover and Click events
             layer.on({
               mouseover: function(e) {
                 const l = e.target;
@@ -483,7 +477,6 @@
         }).addTo(map);
       });
 
-    // Sidebar Update Handler
     function updateSidebar(name, code, data) {
       document.getElementById('info-country').innerText = name;
       document.getElementById('info-code').innerText = code;
