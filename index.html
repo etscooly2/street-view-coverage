@@ -253,6 +253,7 @@
       <select id="map-style">
         <option value="carto">Dark Canvas</option>
         <option value="satellite">Google Satellite</option>
+        <option value="roadmap">Google Roadmap</option>
       </select>
       <select id="tier-filter">
         <option value="ALL">All Tiers</option>
@@ -322,29 +323,38 @@
 
   <script>
     const map = L.map('map', {
-      center: [42.5, 21.0],
-      zoom: 6,
+      center: [20, 0],
+      zoom: 2,
       minZoom: 2,
       maxZoom: 18
     });
 
-    const cartoDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
+    const baseLayers = {
+      carto: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }),
+      satellite: L.tileLayer('https://mt{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps Satellite',
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20
+      }),
+      roadmap: L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps Roadmap',
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20
+      })
+    };
 
-    const googleSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-      attribution: '&copy; Google Maps',
-      subdomains: ['0', '1', '2', '3'],
-      maxZoom: 20
-    });
+    let currentBaseLayer = baseLayers.carto;
+    currentBaseLayer.addTo(map);
 
     const svCoverageLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
       attribution: '&copy; Google Street View',
       subdomains: ['0', '1', '2', '3'],
       maxZoom: 20,
-      opacity: 0.85
+      opacity: 0.90
     }).addTo(map);
 
     let svEnabled = true;
@@ -361,16 +371,17 @@
     });
 
     document.getElementById('map-style').addEventListener('change', (e) => {
-      if (e.target.value === 'satellite') {
-        map.removeLayer(cartoDark);
-        map.addLayer(googleSat);
-      } else {
-        map.removeLayer(googleSat);
-        map.addLayer(cartoDark);
+      const selectedStyle = e.target.value;
+      map.removeLayer(currentBaseLayer);
+      if (baseLayers[selectedStyle]) {
+        currentBaseLayer = baseLayers[selectedStyle];
+        currentBaseLayer.addTo(map);
+      }
+      if (svEnabled) {
+        svCoverageLayer.bringToFront();
       }
     });
 
-    // Dataset including correct ISO codes for Kosovo (XKX / KOS / XK) & North Macedonia (MKD)
     const coverageData = {
       "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
       "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
@@ -437,7 +448,7 @@
           weight: 1,
           opacity: 0.8,
           color: '#1e293b',
-          fillOpacity: 0.45
+          fillOpacity: 0.35
         }),
         onEachFeature: (feature, layer) => {
           const cData = getDataByFeature(feature);
@@ -450,7 +461,7 @@
           layer.on({
             mouseover: (e) => {
               const l = e.target;
-              l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.7 });
+              l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.6 });
               l.bringToFront();
             },
             mouseout: (e) => {
