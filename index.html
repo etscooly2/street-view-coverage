@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Street View Coverage Analyzer</title>
+  <title>Global Street View Coverage Analyzer</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -40,7 +40,7 @@
     h2 {
       font-size: 1.2rem;
       font-weight: 700;
-      color: #89b4fa;
+      color: #38bdf8;
     }
 
     .input-group {
@@ -66,12 +66,12 @@
     }
 
     input[type="text"]:focus {
-      border-color: #89b4fa;
+      border-color: #38bdf8;
     }
 
     .btn-analyze {
-      background: #89b4fa;
-      color: #11111b;
+      background: #38bdf8;
+      color: #0f172a;
       border: none;
       padding: 0.75rem;
       border-radius: 6px;
@@ -82,7 +82,7 @@
     }
 
     .btn-analyze:hover {
-      background: #b4befe;
+      background: #7dd3fc;
     }
 
     .btn-analyze:disabled {
@@ -111,7 +111,7 @@
     .coverage-value {
       font-size: 2.2rem;
       font-weight: 700;
-      color: #a6e3a1;
+      color: #38bdf8;
     }
 
     .status-text {
@@ -154,7 +154,7 @@
     }
 
     .progress-bar-fill {
-      background: #a6e3a1;
+      background: #38bdf8;
       height: 100%;
       width: 0%;
       transition: width 0.2s ease;
@@ -184,16 +184,12 @@
 
     <div class="legend">
       <div class="legend-item">
-        <div class="legend-color" style="background: #38bdf8;"></div>
-        <span>Street View Blue Lines</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color" style="background: #a6e3a1;"></div>
-        <span>Covered by Street View</span>
+        <div class="legend-color" style="background: #0088ff;"></div>
+        <span>Covered Road (Blue)</span>
       </div>
       <div class="legend-item">
         <div class="legend-color" style="background: #f38ba8;"></div>
-        <span>Missing Street View</span>
+        <span>Missing Road (Red)</span>
       </div>
     </div>
   </div>
@@ -204,20 +200,20 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Initialize map focused on Klinë area
-    const map = L.map('map').setView([42.615, 20.59], 14);
+    // World map centered globally
+    const map = L.map('map').setView([20.0, 0.0], 3);
 
-    // Dark Basemap (No API key needed)
+    // Dark Basemap
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
 
-    // Worldwide Google Street View Blue Lines Overlay (No API key needed)
+    // Global Street View Tile Layer (Blue Lines Overlay)
     L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
       subdomains: ['0', '1', '2', '3'],
       maxZoom: 20,
-      opacity: 0.8
+      opacity: 0.75
     }).addTo(map);
 
     let bboxRectangle = null;
@@ -235,7 +231,7 @@
       return { south: parts[0], west: parts[1], north: parts[2], east: parts[3] };
     }
 
-    // JSONP request to Google Street View metadata endpoint to bypass CORS without API Key
+    // JSONP request to check exact metadata coverage at coordinates
     function checkStreetViewCoverageJSONP(lat, lng) {
       return new Promise((resolve) => {
         const callbackName = 'cbk_' + Math.random().toString(36).substr(2, 9);
@@ -282,10 +278,10 @@
 
       const bounds = [[bbox.south, bbox.west], [bbox.north, bbox.east]];
       if (bboxRectangle) map.removeLayer(bboxRectangle);
-      bboxRectangle = L.rectangle(bounds, { color: "#89b4fa", weight: 2, fillOpacity: 0.05 }).addTo(map);
+      bboxRectangle = L.rectangle(bounds, { color: "#38bdf8", weight: 2, fillOpacity: 0.05 }).addTo(map);
       map.fitBounds(bounds);
 
-      // Fetch roads inside bounding box using Overpass API
+      // Overpass query for road geometry
       const overpassQuery = `[out:json][timeout:25];
 (
   way["highway"](${bbox.south},${bbox.west},${bbox.north},${bbox.east});
@@ -313,7 +309,7 @@ out skel qt;`;
 
         const ways = data.elements.filter(el => el.type === 'way');
         if (ways.length === 0) {
-          statusLabel.innerText = 'No roads found in area.';
+          statusLabel.innerText = 'No roads found in this area.';
           analyzeBtn.disabled = false;
           return;
         }
@@ -332,12 +328,12 @@ out skel qt;`;
         });
 
         if (samplePoints.length === 0) {
-          statusLabel.innerText = 'No road geometry points found.';
+          statusLabel.innerText = 'No geometry points extracted.';
           analyzeBtn.disabled = false;
           return;
         }
 
-        statusLabel.innerText = `Analyzing ${samplePoints.length} road points...`;
+        statusLabel.innerText = `Testing ${samplePoints.length} segments...`;
 
         let coveredCount = 0;
         let checkedCount = 0;
@@ -350,8 +346,9 @@ out skel qt;`;
             const hasSV = await checkStreetViewCoverageJSONP(point.lat, point.lng);
             if (hasSV) coveredCount++;
 
-            const lineColor = hasSV ? '#a6e3a1' : '#f38ba8';
-            L.polyline([point.p1, point.p2], { color: lineColor, weight: 4, opacity: 0.85 }).addTo(analyzedLayers);
+            // Covered segments are drawn in bright BLUE (#0088ff), missing in RED (#f38ba8)
+            const lineColor = hasSV ? '#0088ff' : '#f38ba8';
+            L.polyline([point.p1, point.p2], { color: lineColor, weight: 4, opacity: 0.9 }).addTo(analyzedLayers);
           }));
 
           checkedCount += batch.length;
@@ -363,11 +360,11 @@ out skel qt;`;
 
         const finalPct = ((coveredCount / samplePoints.length) * 100).toFixed(1);
         coveragePctElem.innerText = `${finalPct}%`;
-        statusLabel.innerText = `Analysis complete! (${coveredCount}/${samplePoints.length} covered)`;
+        statusLabel.innerText = `Done! (${coveredCount}/${samplePoints.length} covered)`;
 
       } catch (err) {
         console.error(err);
-        statusLabel.innerText = 'Error fetching road data. Try again.';
+        statusLabel.innerText = 'Error fetching data. Please try again.';
       } finally {
         analyzeBtn.disabled = false;
       }
