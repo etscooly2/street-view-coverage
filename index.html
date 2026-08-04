@@ -193,8 +193,9 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Dataset strictly containing countries with official Street View support
+        // Accurate list of countries and official territories with official Google Street View coverage (Total: 106)
         const countryData = {
+            // North & Central America / Caribbean
             "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
             "Canada": { score: 75, updated: "2026", iso: "CAN", aliases: ["Canada"] },
             "Mexico": { score: 75, updated: "2026", iso: "MEX", aliases: ["Mexico"] },
@@ -215,6 +216,7 @@
             "Guadeloupe": { score: 75, updated: "2024", iso: "GLP", aliases: ["Guadeloupe"] },
             "Saint Barthélemy": { score: 80, updated: "2024", iso: "BLM", aliases: ["Saint Barthelemy", "Saint Barthélemy"] },
 
+            // South America
             "Argentina": { score: 65, updated: "2026", iso: "ARG", aliases: ["Argentina"] },
             "Brazil": { score: 60, updated: "2026", iso: "BRA", aliases: ["Brazil"] },
             "Chile": { score: 70, updated: "2026", iso: "CHL", aliases: ["Chile"] },
@@ -225,6 +227,7 @@
             "Bolivia": { score: 35, updated: "2024", iso: "BOL", aliases: ["Bolivia"] },
             "Falkland Islands": { score: 40, updated: "2024", iso: "FLK", aliases: ["Falkland Islands", "Islas Malvinas"] },
 
+            // Europe
             "Albania": { score: 55, updated: "2026", iso: "ALB", aliases: ["Albania"] },
             "Andorra": { score: 95, updated: "2025", iso: "AND", aliases: ["Andorra"] },
             "Austria": { score: 70, updated: "2026", iso: "AUT", aliases: ["Austria"] },
@@ -256,7 +259,6 @@
             "Poland": { score: 88, updated: "2026", iso: "POL", aliases: ["Poland"] },
             "Portugal": { score: 90, updated: "2026", iso: "PRT", aliases: ["Portugal"] },
             "Romania": { score: 82, updated: "2026", iso: "ROU", aliases: ["Romania"] },
-            "Russia": { score: 40, updated: "2022", iso: "RUS", aliases: ["Russia", "Russian Federation"] },
             "San Marino": { score: 95, updated: "2025", iso: "SMR", aliases: ["San Marino"] },
             "Serbia": { score: 70, updated: "2026", iso: "SRB", aliases: ["Serbia", "Republic of Serbia"] },
             "Slovakia": { score: 85, updated: "2026", iso: "SVK", aliases: ["Slovakia"] },
@@ -271,10 +273,11 @@
             "Isle of Man": { score: 80, updated: "2024", iso: "IMN", aliases: ["Isle of Man"] },
             "Jersey": { score: 85, updated: "2024", iso: "JEY", aliases: ["Jersey"] },
             "Guernsey": { score: 80, updated: "2024", iso: "GGY", aliases: ["Guernsey"] },
-            "Aland": { score: 70, updated: "2024", iso: "ALA", aliases: ["Åland", "Aland Islands"] },
+            "Åland Islands": { score: 70, updated: "2024", iso: "ALA", aliases: ["Åland", "Aland Islands"] },
             "Bosnia and Herzegovina": { score: 75, updated: "2026", iso: "BIH", aliases: ["Bosnia and Herzegovina", "Bosnia"] },
             "Cyprus": { score: 70, updated: "2025", iso: "CYP", aliases: ["Cyprus"] },
 
+            // Asia & Middle East
             "Israel": { score: 85, updated: "2026", iso: "ISR", aliases: ["Israel"] },
             "Jordan": { score: 40, updated: "2025", iso: "JOR", aliases: ["Jordan"] },
             "United Arab Emirates": { score: 75, updated: "2026", iso: "ARE", aliases: ["United Arab Emirates", "UAE"] },
@@ -306,6 +309,7 @@
             "Georgia": { score: 60, updated: "2025", iso: "GEO", aliases: ["Georgia"] },
             "Palestine": { score: 30, updated: "2024", iso: "PSE", aliases: ["Palestine", "State of Palestine"] },
 
+            // Africa
             "South Africa": { score: 65, updated: "2026", iso: "ZAF", aliases: ["South Africa"] },
             "Lesotho": { score: 45, updated: "2024", iso: "LSO", aliases: ["Lesotho"] },
             "Eswatini": { score: 45, updated: "2024", iso: "SWZ", aliases: ["Eswatini", "Swaziland"] },
@@ -324,6 +328,7 @@
             "São Tomé and Príncipe": { score: 30, updated: "2024", iso: "STP", aliases: ["Sao Tome and Principe", "São Tomé and Príncipe"] },
             "Namibia": { score: 40, updated: "2024", iso: "NAM", aliases: ["Namibia"] },
 
+            // Oceania
             "Australia": { score: 85, updated: "2026", iso: "AUS", aliases: ["Australia"] },
             "New Zealand": { score: 88, updated: "2026", iso: "NZL", aliases: ["New Zealand"] },
             "Guam": { score: 80, updated: "2024", iso: "GUM", aliases: ["Guam"] },
