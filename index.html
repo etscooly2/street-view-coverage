@@ -71,20 +71,14 @@
             color: #fff;
         }
 
-        /* Search & Filter Controls */
+        /* Search Controls */
         .controls {
             padding: 12px 20px;
             background: #1e1e1e;
             border-bottom: 1px solid #2d2d2d;
-            display: flex;
-            gap: 10px;
         }
 
-        .search-box {
-            flex: 1;
-        }
-
-        .search-box input, .filter-select {
+        .search-box input {
             width: 100%;
             padding: 8px 12px;
             background: #2b2b2b;
@@ -95,7 +89,7 @@
             font-size: 0.85rem;
         }
 
-        .search-box input:focus, .filter-select:focus {
+        .search-box input:focus {
             border-color: #4dabf7;
         }
 
@@ -189,9 +183,6 @@
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
             </div>
-            <select id="filter-select" class="filter-select" onchange="filterCountries()">
-                <option value="official">Official Street View</option>
-            </select>
         </div>
 
         <div id="country-list"></div>
@@ -202,9 +193,8 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Exhaustive Full Dataset: Exactly Sovereign Countries & Territories with Official Street View Support (score > 0)
+        // Dataset strictly containing countries with official Street View support
         const countryData = {
-            // NORTH AMERICA, CENTRAL AMERICA & CARIBBEAN
             "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
             "Canada": { score: 75, updated: "2026", iso: "CAN", aliases: ["Canada"] },
             "Mexico": { score: 75, updated: "2026", iso: "MEX", aliases: ["Mexico"] },
@@ -225,7 +215,6 @@
             "Guadeloupe": { score: 75, updated: "2024", iso: "GLP", aliases: ["Guadeloupe"] },
             "Saint Barthélemy": { score: 80, updated: "2024", iso: "BLM", aliases: ["Saint Barthelemy", "Saint Barthélemy"] },
 
-            // SOUTH AMERICA
             "Argentina": { score: 65, updated: "2026", iso: "ARG", aliases: ["Argentina"] },
             "Brazil": { score: 60, updated: "2026", iso: "BRA", aliases: ["Brazil"] },
             "Chile": { score: 70, updated: "2026", iso: "CHL", aliases: ["Chile"] },
@@ -236,7 +225,6 @@
             "Bolivia": { score: 35, updated: "2024", iso: "BOL", aliases: ["Bolivia"] },
             "Falkland Islands": { score: 40, updated: "2024", iso: "FLK", aliases: ["Falkland Islands", "Islas Malvinas"] },
 
-            // EUROPE
             "Albania": { score: 55, updated: "2026", iso: "ALB", aliases: ["Albania"] },
             "Andorra": { score: 95, updated: "2025", iso: "AND", aliases: ["Andorra"] },
             "Austria": { score: 70, updated: "2026", iso: "AUT", aliases: ["Austria"] },
@@ -287,7 +275,6 @@
             "Bosnia and Herzegovina": { score: 75, updated: "2026", iso: "BIH", aliases: ["Bosnia and Herzegovina", "Bosnia"] },
             "Cyprus": { score: 70, updated: "2025", iso: "CYP", aliases: ["Cyprus"] },
 
-            // ASIA & MIDDLE EAST
             "Israel": { score: 85, updated: "2026", iso: "ISR", aliases: ["Israel"] },
             "Jordan": { score: 40, updated: "2025", iso: "JOR", aliases: ["Jordan"] },
             "United Arab Emirates": { score: 75, updated: "2026", iso: "ARE", aliases: ["United Arab Emirates", "UAE"] },
@@ -319,7 +306,6 @@
             "Georgia": { score: 60, updated: "2025", iso: "GEO", aliases: ["Georgia"] },
             "Palestine": { score: 30, updated: "2024", iso: "PSE", aliases: ["Palestine", "State of Palestine"] },
 
-            // AFRICA
             "South Africa": { score: 65, updated: "2026", iso: "ZAF", aliases: ["South Africa"] },
             "Lesotho": { score: 45, updated: "2024", iso: "LSO", aliases: ["Lesotho"] },
             "Eswatini": { score: 45, updated: "2024", iso: "SWZ", aliases: ["Eswatini", "Swaziland"] },
@@ -338,7 +324,6 @@
             "São Tomé and Príncipe": { score: 30, updated: "2024", iso: "STP", aliases: ["Sao Tome and Principe", "São Tomé and Príncipe"] },
             "Namibia": { score: 40, updated: "2024", iso: "NAM", aliases: ["Namibia"] },
 
-            // OCEANIA
             "Australia": { score: 85, updated: "2026", iso: "AUS", aliases: ["Australia"] },
             "New Zealand": { score: 88, updated: "2026", iso: "NZL", aliases: ["New Zealand"] },
             "Guam": { score: 80, updated: "2024", iso: "GUM", aliases: ["Guam"] },
@@ -354,11 +339,9 @@
 
         // Color Scale Function
         function getColor(score) {
-            if (score === undefined || score === 0) return '#2a2a2a';
             return score >= 80 ? '#2ecc71' :
                    score >= 60 ? '#3498db' :
-                   score >= 40 ? '#f1c40f' :
-                   score > 0   ? '#e74c3c' : '#2a2a2a';
+                   score >= 40 ? '#f1c40f' : '#e74c3c';
         }
 
         // Initialize Map
@@ -394,9 +377,7 @@
 
         function styleFeature(feature) {
             const data = findCountryData(feature);
-            const score = data ? data.score : 0;
-
-            if (score === 0) {
+            if (!data) {
                 return {
                     fillColor: 'transparent',
                     weight: 0,
@@ -406,7 +387,7 @@
             }
 
             return {
-                fillColor: getColor(score),
+                fillColor: getColor(data.score),
                 weight: 1,
                 opacity: 1,
                 color: '#1e1e1e',
@@ -417,7 +398,7 @@
         function highlightFeature(e) {
             const layer = e.target;
             const data = findCountryData(layer.feature);
-            if (!data || data.score === 0) return;
+            if (!data) return;
 
             layer.setStyle({
                 weight: 2,
@@ -435,7 +416,7 @@
 
         function onEachFeature(feature, layer) {
             const data = findCountryData(feature);
-            if (!data || data.score === 0) {
+            if (!data) {
                 layer.setStyle({ fillOpacity: 0, weight: 0, opacity: 0 });
                 return;
             }
@@ -477,7 +458,7 @@
                     const searchStr = filterText.toLowerCase();
                     const nameMatch = name.toLowerCase().includes(searchStr);
                     const aliasMatch = data.aliases && data.aliases.some(a => a.toLowerCase().includes(searchStr));
-                    return (nameMatch || aliasMatch) && data.score > 0;
+                    return nameMatch || aliasMatch;
                 })
                 .sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
 
@@ -505,7 +486,7 @@
         }
 
         function updateStats() {
-            const entries = Object.values(countryData).filter(e => e.score > 0);
+            const entries = Object.values(countryData);
             const total = entries.length;
             const avg = total > 0 ? Math.round(entries.reduce((acc, curr) => acc + curr.score, 0) / total) : 0;
 
