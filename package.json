@@ -1,0 +1,13 @@
+// package.json
+{
+  "name": "street-view-coverage",
+  "version": "1.0.0",
+  "description": "Global Google Street View Coverage Map 2026",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p dist && cp index.html dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
