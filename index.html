@@ -389,43 +389,56 @@
 
     let geojsonLayer;
 
-    // Fetch GeoJSON World Boundaries
-    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-      .then(res => res.json())
-      .then(data => {
-        geojsonLayer = L.geoJson(data, {
-          style: (feature) => ({
-            fillColor: getColor(feature.id),
-            weight: 1,
-            opacity: 1,
-            color: '#1e293b',
-            fillOpacity: 0.75
-          }),
-          onEachFeature: (feature, layer) => {
-            const iso = feature.id;
-            const cData = coverageData[iso] || { name: feature.properties.name, pct: 0, tier: "No Official Coverage" };
+    // CORS-Safe GeoJSON Fetch with Fallback
+    const geoJsonUrl = 'https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json';
 
-            layer.bindTooltip(`<b>${cData.name}</b><br/>Coverage: ${cData.pct > 0 ? cData.pct + '%' : 'None'}`, {
-              className: 'leaflet-tooltip-custom',
-              direction: 'top'
-            });
-
-            layer.on({
-              mouseover: (e) => {
-                const l = e.target;
-                l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.95 });
-                l.bringToFront();
-              },
-              mouseout: (e) => {
-                geojsonLayer.resetStyle(e.target);
-              },
-              click: () => {
-                showCountryDetails(cData);
-              }
-            });
-          }
-        }).addTo(map);
+    fetch(geoJsonUrl)
+      .then(res => {
+        if (!res.ok) throw new Error('CORS or Network Error');
+        return res.json();
+      })
+      .then(data => renderGeoJson(data))
+      .catch(err => {
+        console.warn('Primary GeoJSON CDN failed, attempting fallback...', err);
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+          .then(res => res.json())
+          .then(data => renderGeoJson(data));
       });
+
+    function renderGeoJson(data) {
+      geojsonLayer = L.geoJson(data, {
+        style: (feature) => ({
+          fillColor: getColor(feature.id),
+          weight: 1,
+          opacity: 1,
+          color: '#1e293b',
+          fillOpacity: 0.75
+        }),
+        onEachFeature: (feature, layer) => {
+          const iso = feature.id;
+          const cData = coverageData[iso] || { name: feature.properties.name, pct: 0, tier: "No Official Coverage" };
+
+          layer.bindTooltip(`<b>${cData.name}</b><br/>Coverage: ${cData.pct > 0 ? cData.pct + '%' : 'None'}`, {
+            className: 'leaflet-tooltip-custom',
+            direction: 'top'
+          });
+
+          layer.on({
+            mouseover: (e) => {
+              const l = e.target;
+              l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.95 });
+              l.bringToFront();
+            },
+            mouseout: (e) => {
+              geojsonLayer.resetStyle(e.target);
+            },
+            click: () => {
+              showCountryDetails(cData);
+            }
+          });
+        }
+      }).addTo(map);
+    }
 
     function showCountryDetails(data) {
       const card = document.getElementById('country-card');
