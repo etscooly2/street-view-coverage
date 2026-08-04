@@ -251,8 +251,8 @@
         <span>📍 Blue Lines Layer</span>
       </button>
       <select id="map-style">
+        <option value="carto">Dark Canvas (No Key)</option>
         <option value="satellite">Google Satellite</option>
-        <option value="carto">Dark Canvas</option>
         <option value="roadmap">Google Roadmap</option>
       </select>
       <select id="tier-filter">
@@ -329,16 +329,17 @@
       maxZoom: 18
     });
 
+    // Base map providers operating entirely keyless
     const baseLayers = {
-      satellite: L.tileLayer('https://mt{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-        attribution: '&copy; Google Maps Satellite',
-        subdomains: ['0', '1', '2', '3'],
-        maxZoom: 20
-      }),
       carto: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: 'abcd',
         maxZoom: 19
+      }),
+      satellite: L.tileLayer('https://mt{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps Satellite',
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20
       }),
       roadmap: L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         attribution: '&copy; Google Maps Roadmap',
@@ -347,9 +348,10 @@
       })
     };
 
-    let currentBaseLayer = baseLayers.satellite;
+    let currentBaseLayer = baseLayers.carto;
     currentBaseLayer.addTo(map);
 
+    // Street View overlay layer using standard Google tile endpoint
     const svCoverageLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
       attribution: '&copy; Google Street View',
       subdomains: ['0', '1', '2', '3'],
@@ -384,7 +386,6 @@
 
     // Complete Global Street View Coverage Database
     const coverageData = {
-      // North America & Caribbean
       "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
       "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
       "MEX": { name: "Mexico", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇲🇽" },
@@ -396,8 +397,6 @@
       "DOM": { name: "Dominican Republic", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇴" },
       "PAN": { name: "Panama", pct: 10, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Boat", flag: "🇵🇦" },
       "CRI": { name: "Costa Rica", pct: 15, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Trekker Bike", flag: "🇨🇷" },
-
-      // South America
       "BRA": { name: "Brazil", pct: 82, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇧🇷" },
       "ARG": { name: "Argentina", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇷" },
       "CHL": { name: "Chile", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇱" },
@@ -406,8 +405,6 @@
       "ECU": { name: "Ecuador", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇨" },
       "URY": { name: "Uruguay", pct: 78, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇺🇾" },
       "BOL": { name: "Bolivia", pct: 45, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇴" },
-
-      // Western & Northern Europe
       "GBR": { name: "United Kingdom", pct: 97, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇬🇧" },
       "IRL": { name: "Ireland", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇪" },
       "FRA": { name: "France", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇫🇷" },
@@ -429,11 +426,9 @@
       "SMR": { name: "San Marino", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇲" },
       "MLT": { name: "Malta", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇹" },
       "FRO": { name: "Faroe Islands", pct: 85, tier: "High", cars: "Yes", vehicle: "Sheep Cam / Car", flag: "🇫🇴" },
-
-      // Central & Eastern Europe + Balkans
       "POL": { name: "Poland", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
       "CZE": { name: "Czechia", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇿" },
-      "SVK": { name: "Slovakia", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇰" },
+      "SVK": { name: "Slovakia", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸lovakia" },
       "HUN": { name: "Hungary", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇺" },
       "ROU": { name: "Romania", pct: 86, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇴" },
       "BGR": { name: "Bulgaria", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇬" },
@@ -450,13 +445,9 @@
       "EST": { name: "Estonia", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇪" },
       "LVA": { name: "Latvia", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇻" },
       "LTU": { name: "Lithuania", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇹" },
-
-      // Kosovo Mappings
       "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
       "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
       "XK":  { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
-
-      // Middle East & North Africa
       "ISR": { name: "Israel", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇱" },
       "JOR": { name: "Jordan", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
       "ARE": { name: "United Arab Emirates", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard / Trekker", flag: "🇦🇪" },
@@ -466,8 +457,6 @@
       "EGY": { name: "Egypt", pct: 8, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Camel", flag: "🇪🇬" },
       "LBN": { name: "Lebanon", pct: 10, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker", flag: "🇱🇧" },
       "IRQ": { name: "Iraq", pct: 5, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker", flag: "🇮🇶" },
-
-      // Sub-Saharan Africa
       "ZAF": { name: "South Africa", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇿🇦" },
       "NGA": { name: "Nigeria", pct: 42, tier: "Medium", cars: "Yes", vehicle: "Standard Car / Trekker", flag: "🇳🇬" },
       "KEN": { name: "Kenya", pct: 38, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇪" },
@@ -480,8 +469,6 @@
       "BWA": { name: "Botswana", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇼" },
       "MDG": { name: "Madagascar", pct: 5, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Boat", flag: "🇲🇬" },
       "REU": { name: "Réunion", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇪" },
-
-      // Asia-Pacific & Oceania
       "JPN": { name: "Japan", pct: 96, tier: "High", cars: "Yes", vehicle: "Low-mount Gen 4 / Trekker", flag: "🇯🇵" },
       "KOR": { name: "South Korea", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇷" },
       "TWN": { name: "Taiwan", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car / Scooter", flag: "🇹🇼" },
