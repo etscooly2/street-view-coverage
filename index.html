@@ -34,6 +34,8 @@
       align-items: center;
       border-bottom: 1px solid #334155;
       z-index: 1000;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     header h1 {
@@ -49,6 +51,7 @@
       display: flex;
       gap: 0.75rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     input[type="text"], select {
@@ -62,11 +65,35 @@
     }
 
     input[type="text"] {
-      width: 200px;
+      width: 180px;
     }
 
     input[type="text"]:focus, select:focus {
       border-color: #38bdf8;
+    }
+
+    .btn-toggle {
+      background: #0284c7;
+      border: 1px solid #38bdf8;
+      color: #fff;
+      padding: 0.5rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle:hover {
+      background: #0369a1;
+    }
+
+    .btn-toggle.active {
+      background: #22c55e;
+      border-color: #4ade80;
     }
 
     .main-container {
@@ -220,6 +247,13 @@
   <header>
     <h1>🌐 Street View Global Coverage Tracker (2026)</h1>
     <div class="controls">
+      <button id="toggle-sv" class="btn-toggle active">
+        <span>📍 Blue Lines Layer</span>
+      </button>
+      <select id="map-style">
+        <option value="carto">Dark Canvas</option>
+        <option value="satellite">Google Satellite</option>
+      </select>
       <select id="tier-filter">
         <option value="ALL">All Tiers</option>
         <option value="High">High (75%+)</option>
@@ -248,6 +282,9 @@
         <div class="legend-item"><div class="color-box" style="background: #38bdf8;"></div> Partial Coverage (15% - 39%)</div>
         <div class="legend-item"><div class="color-box" style="background: #f59e0b;"></div> Isolated / Landmarks (&lt; 15%)</div>
         <div class="legend-item"><div class="color-box" style="background: #334155;"></div> No Official Coverage</div>
+        <div class="legend-item" style="margin-top:0.75rem; border-top: 1px solid #334155; padding-top: 0.5rem;">
+          <div class="color-box" style="background: #00bfff; height: 3px; border-radius: 0;"></div> Street View Blue Lines (Live Overlay)
+        </div>
       </div>
 
       <div id="country-card" class="country-details">
@@ -289,26 +326,64 @@
       center: [20, 0],
       zoom: 2,
       minZoom: 2,
-      maxZoom: 7
+      maxZoom: 18
     });
 
-    // Dark Map Base Layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    // Base Layers
+    const cartoDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(map);
 
-    // Complete Global Dataset (Updated for 2026 Coverage expansions)
+    const googleSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+      attribution: '&copy; Google Maps',
+      subdomains: ['0', '1', '2', '3'],
+      maxZoom: 20
+    });
+
+    // Real Google Street View Coverage Lines Tile Layer
+    const svCoverageLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
+      attribution: '&copy; Google Street View',
+      subdomains: ['0', '1', '2', '3'],
+      maxZoom: 20,
+      opacity: 0.85
+    }).addTo(map);
+
+    // Toggle Blue Lines Layer
+    let svEnabled = true;
+    const toggleBtn = document.getElementById('toggle-sv');
+    toggleBtn.addEventListener('click', () => {
+      svEnabled = !svEnabled;
+      if (svEnabled) {
+        map.addLayer(svCoverageLayer);
+        toggleBtn.classList.add('active');
+      } else {
+        map.removeLayer(svCoverageLayer);
+        toggleBtn.classList.remove('active');
+      }
+    });
+
+    // Toggle Map Style
+    document.getElementById('map-style').addEventListener('change', (e) => {
+      if (e.target.value === 'satellite') {
+        map.removeLayer(cartoDark);
+        map.addLayer(googleSat);
+      } else {
+        map.removeLayer(googleSat);
+        map.addLayer(cartoDark);
+      }
+    });
+
+    // Global Dataset
     const coverageData = {
-      // High Coverage (75% - 100%)
       "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
       "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
       "GBR": { name: "United Kingdom", pct: 97, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇬🇧" },
       "FRA": { name: "France", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇫🇷" },
       "ESP": { name: "Spain", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇸" },
       "ITA": { name: "Italy", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇹" },
-      "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes (Re-mapped 2023-2026)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
+      "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes (Re-mapped)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
       "NLD": { name: "Netherlands", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇱" },
       "BEL": { name: "Belgium", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇪" },
       "DNK": { name: "Denmark", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇰" },
@@ -328,11 +403,9 @@
       "SVN": { name: "Slovenia", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇮" },
       "GRC": { name: "Greece", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇷" },
 
-      // Medium Coverage (40% - 74%)
       "ALB": { name: "Albania", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇱" },
       "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
       "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "KXK": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
       "AUT": { name: "Austria", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇹" },
       "POL": { name: "Poland", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
       "ROU": { name: "Romania", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇴" },
@@ -348,9 +421,8 @@
       "MYS": { name: "Malaysia", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇾" },
       "THA": { name: "Thailand", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇭" },
       "IDN": { name: "Indonesia", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Car & Scooter", flag: "🇮🇩" },
-      "IND": { name: "India", pct: 52, tier: "Medium", cars: "Yes (Partner Drives)", vehicle: "Car & Trike", flag: "🇮🇳" },
+      "IND": { name: "India", pct: 52, tier: "Medium", cars: "Yes", vehicle: "Car & Trike", flag: "🇮🇳" },
 
-      // Partial Coverage (15% - 39%)
       "RUS": { name: "Russia", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇺" },
       "PHL": { name: "Philippines", pct: 39, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇭" },
       "NGA": { name: "Nigeria", pct: 32, tier: "Partial", cars: "Yes", vehicle: "Car & Trekker", flag: "🇳🇬" },
@@ -360,14 +432,13 @@
       "JOR": { name: "Jordan", pct: 28, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
       "RWA": { name: "Rwanda", pct: 20, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇼" },
 
-      // Spot / Landmark Coverage (< 15%)
       "EGY": { name: "Egypt", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇪🇬" },
       "CHN": { name: "China", pct: 3, tier: "Landmarks Only", cars: "No", vehicle: "Indoor Trekker", flag: "🇨🇳" },
       "NPL": { name: "Nepal", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇳🇵" },
       "IRQ": { name: "Iraq", pct: 4, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇮🇶" },
       "PAK": { name: "Pakistan", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇰" },
       "TZA": { name: "Tanzania", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker / Boat", flag: "🇹🇿" },
-      "GRL": { name: "Greenland", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile / ATV", flag: "🇬🇱" },
+      "GRL": { name: "Greenland", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile", flag: "🇬🇱" },
       "MDG": { name: "Madagascar", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇲🇬" }
     };
 
@@ -375,10 +446,10 @@
 
     function getColor(iso) {
       const data = coverageData[iso];
-      if (!data) return '#334155'; // No coverage / unmapped
+      if (!data) return '#334155';
       
       if (selectedTierFilter !== "ALL" && data.tier !== selectedTierFilter) {
-        return '#1e293b'; // Dimmed when filter applied
+        return '#1e293b';
       }
 
       if (data.pct >= 75) return '#0284c7';
@@ -389,17 +460,10 @@
 
     let geojsonLayer;
 
-    // CORS-Safe GeoJSON Fetch with Fallback
-    const geoJsonUrl = 'https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json';
-
-    fetch(geoJsonUrl)
-      .then(res => {
-        if (!res.ok) throw new Error('CORS or Network Error');
-        return res.json();
-      })
+    fetch('https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json')
+      .then(res => res.json())
       .then(data => renderGeoJson(data))
-      .catch(err => {
-        console.warn('Primary GeoJSON CDN failed, attempting fallback...', err);
+      .catch(() => {
         fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
           .then(res => res.json())
           .then(data => renderGeoJson(data));
@@ -410,9 +474,9 @@
         style: (feature) => ({
           fillColor: getColor(feature.id),
           weight: 1,
-          opacity: 1,
+          opacity: 0.8,
           color: '#1e293b',
-          fillOpacity: 0.75
+          fillOpacity: 0.45
         }),
         onEachFeature: (feature, layer) => {
           const iso = feature.id;
@@ -426,7 +490,7 @@
           layer.on({
             mouseover: (e) => {
               const l = e.target;
-              l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.95 });
+              l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.7 });
               l.bringToFront();
             },
             mouseout: (e) => {
@@ -438,6 +502,9 @@
           });
         }
       }).addTo(map);
+
+      // Ensure coverage lines sit over/under polygons appropriately
+      svCoverageLayer.bringToFront();
     }
 
     function showCountryDetails(data) {
@@ -445,7 +512,7 @@
       card.classList.add('active');
 
       document.getElementById('c-name').innerText = data.name;
-      document.getElementById('c-flag').innerText = data.flag || '🏳️';
+      document.getElementById('c-flag').innerText = data.flag || '🏁';
       document.getElementById('c-progress').style.width = (data.pct || 0) + '%';
       document.getElementById('c-tier').innerText = data.tier || 'None';
       document.getElementById('c-cars').innerText = data.cars || 'No';
@@ -453,7 +520,6 @@
       document.getElementById('c-community').innerText = 'Active';
     }
 
-    // Tier Filter Control
     document.getElementById('tier-filter').addEventListener('change', (e) => {
       selectedTierFilter = e.target.value;
       if (geojsonLayer) {
@@ -463,7 +529,6 @@
       }
     });
 
-    // Search bar functionality
     document.getElementById('search-input').addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
       if (!query) return;
