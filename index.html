@@ -190,7 +190,7 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Comprehensive List of Official Google Street View Countries & Territories
+        // Full Dataset of Official Google Street View Countries & Territories
         const countryData = {
             // North America & Caribbean
             "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
@@ -314,7 +314,7 @@
                    score > 0   ? '#e74c3c' : '#333333';
         }
 
-        // Initialize Leaflet Map
+        // Initialize Map
         const map = L.map('map', {
             center: [20, 0],
             zoom: 2,
@@ -322,7 +322,7 @@
             maxBounds: [[-90, -180], [90, 180]]
         });
 
-        // Dark Tiles Base Layer
+        // Dark Canvas Layer
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
             subdomains: 'abcd',
@@ -331,14 +331,12 @@
 
         let geojsonLayer;
 
-        // Matches GeoJSON country name or ISO to our dataset
         function findCountryData(feature) {
             const name = feature.properties.name;
             const id = feature.id || feature.properties.iso_a3 || feature.properties.ISO_A3;
 
             if (countryData[name]) return countryData[name];
 
-            // Search by ISO or Aliases
             for (const [key, val] of Object.entries(countryData)) {
                 if (val.iso === id || (val.aliases && val.aliases.some(alias => alias.toLowerCase() === name.toLowerCase()))) {
                     return val;
@@ -347,7 +345,6 @@
             return null;
         }
 
-        // Style Function for GeoJSON features
         function styleFeature(feature) {
             const data = findCountryData(feature);
             const score = data ? data.score : undefined;
@@ -361,7 +358,6 @@
             };
         }
 
-        // Mouse Event Handlers
         function highlightFeature(e) {
             const layer = e.target;
             layer.setStyle({
@@ -383,7 +379,6 @@
             const data = findCountryData(feature);
             const scoreText = data ? `${data.score}%` : 'No Official Coverage';
 
-            // Tooltip displaying Country Name & Score
             layer.bindTooltip(
                 `<strong>${name}</strong><br/>Coverage: ${scoreText}`,
                 { className: 'leaflet-tooltip-custom', sticky: true }
@@ -398,7 +393,7 @@
             });
         }
 
-        // Load GeoJSON World Boundaries (Includes Kosovo & high detail boundaries)
+        // Fetch World Borders
         fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
             .then(response => response.json())
             .then(data => {
@@ -409,7 +404,6 @@
             })
             .catch(err => console.error("Error loading GeoJSON data:", err));
 
-        // Render Sidebar Country List
         function renderCountryList(filterText = '') {
             const listContainer = document.getElementById('country-list');
             listContainer.innerHTML = '';
@@ -467,7 +461,6 @@
             });
         }
 
-        // Initial setup
         renderCountryList();
         updateStats();
     </script>
