@@ -1,17 +1,25 @@
-# .github/workflows/build.yml
-name: Build Pipeline
+# .github/workflows/deploy.yml
+name: Deploy Pipeline
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,31 +31,39 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Verify or create package.json
+      - name: Ensure package.json exists
         run: |
           if [ ! -f package.json ]; then
             npm init -y
           fi
 
-      - name: Install dependencies
+      - name: Install dependencies safely
         run: |
           if [ -f package-lock.json ]; then
-            npm ci
+            npm ci || npm install
           else
             npm install
           fi
 
-      - name: Build project
+      - name: Build static assets
         run: |
           mkdir -p dist
-          if [ -f index.html ]; then
+          if npm run | grep -q "build"; then
+            npm run build
+          elif [ -f index.html ]; then
             cp index.html dist/
           else
             echo "<h1>Build successful</h1>" > dist/index.html
           fi
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: build-artifacts
-          path: dist/
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
