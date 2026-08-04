@@ -434,7 +434,7 @@
 
     function onEachFeature(feature, layer) {
       const pct = getCountryPercentage(feature.id, feature.properties.name);
-      layer.bindTooltip(`<strong>${feature.properties.name}</strong><br/>Score: ${pct}%`, {
+      layer.bindTooltip(`<strong>${feature.properties.name}</strong><br/>${pct}%`, {
         sticky: true
       });
       layer.on({
