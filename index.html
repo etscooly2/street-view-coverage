@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Street View Coverage Analyzer (No API Key)</title>
+  <title>Global Street View Coverage & Analyzer (sv-map 2026 Dataset)</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -55,7 +55,7 @@
       font-weight: 500;
     }
 
-    input[type="text"] {
+    input[type="text"], select {
       background: #181825;
       border: 1px solid #313244;
       color: #cdd6f4;
@@ -65,7 +65,7 @@
       outline: none;
     }
 
-    input[type="text"]:focus {
+    input[type="text"]:focus, select:focus {
       border-color: #89b4fa;
     }
 
@@ -142,7 +142,7 @@
     #map {
       flex: 1;
       height: 100%;
-      background: #11111b;
+      background: #000;
     }
 
     .progress-bar-bg {
@@ -167,6 +167,16 @@
     <h2>Street View Coverage</h2>
 
     <div class="input-group">
+      <label for="dataset-select">sv-map Archive Dataset</label>
+      <select id="dataset-select">
+        <option value="https://d3q761cy2sygif.cloudfront.net/2026-08-01.pmtiles" selected>August 1, 2026 (Latest)</option>
+        <option value="https://d3q761cy2sygif.cloudfront.net/2026-07-01.pmtiles">July 1, 2026</option>
+        <option value="https://d3q761cy2sygif.cloudfront.net/2026-01-01.pmtiles">January 1, 2026</option>
+        <option value="google-live">Google Live Raster Tile Layer</option>
+      </select>
+    </div>
+
+    <div class="input-group">
       <label for="bbox-input">Bounding Box (South, West, North, East)</label>
       <input type="text" id="bbox-input" value="42.605, 20.575, 42.625, 20.605" />
     </div>
@@ -184,12 +194,16 @@
 
     <div class="legend">
       <div class="legend-item">
+        <div class="legend-color" style="background: #38bdf8;"></div>
+        <span>Worldwide Blue Lines (sv-map Layer)</span>
+      </div>
+      <div class="legend-item">
         <div class="legend-color" style="background: #a6e3a1;"></div>
-        <span>Covered by Street View</span>
+        <span>Covered Road (Analyzed)</span>
       </div>
       <div class="legend-item">
         <div class="legend-color" style="background: #f38ba8;"></div>
-        <span>Missing Street View</span>
+        <span>Missing Road (Analyzed)</span>
       </div>
     </div>
   </div>
@@ -198,10 +212,12 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- PMTiles Engine for Leaflet (sv-map support) -->
+  <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
 
   <script>
     // Initialize map focused on default Kosovo coordinates
-    const map = L.map('map').setView([42.615, 20.59], 14);
+    const map = L.map('map').setView([42.615, 20.59], 13);
 
     // Dark Map Basemap (No Key Needed)
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -209,12 +225,37 @@
       attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
 
-    // Add keyless Street View blue line overlay layer
-    const svTileOverlay = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
-      subdomains: ['0', '1', '2', '3'],
-      maxZoom: 20,
-      opacity: 0.6
-    }).addTo(map);
+    // Dynamic layer holder for sv-map dataset
+    let svCoverageLayer = null;
+
+    function loadSvMapLayer(url) {
+      if (svCoverageLayer) {
+        map.removeLayer(svCoverageLayer);
+      }
+
+      if (url === 'google-live') {
+        svCoverageLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
+          subdomains: ['0', '1', '2', '3'],
+          maxZoom: 20,
+          opacity: 0.8
+        }).addTo(map);
+      } else {
+        // Load PMTiles protocol from sv-map CloudFront source
+        const p = new pmtiles.PMTiles(url);
+        svCoverageLayer = pmtiles.leafletRasterLayer(p, {
+          maxZoom: 20,
+          opacity: 0.85
+        }).addTo(map);
+      }
+    }
+
+    // Load August 1, 2026 sv-map archive dataset on boot
+    loadSvMapLayer('https://d3q761cy2sygif.cloudfront.net/2026-08-01.pmtiles');
+
+    // Switch dataset when select dropdown is changed
+    document.getElementById('dataset-select').addEventListener('change', (e) => {
+      loadSvMapLayer(e.target.value);
+    });
 
     let bboxRectangle = null;
     let analyzedLayers = L.layerGroup().addTo(map);
@@ -232,13 +273,12 @@
       return { south: parts[0], west: parts[1], north: parts[2], east: parts[3] };
     }
 
-    // Check individual coordinate for Street View metadata via keyless endpoint
+    // Check individual coordinate for Street View metadata
     async function checkStreetViewCoverage(lat, lng) {
       const url = `https://cbks0.google.com/cbk?output=json&ll=${lat},${lng}`;
       try {
         const response = await fetch(url);
         const data = await response.json();
-        // If Google returns a panorama ID, coverage exists at this point
         return !!(data && data.Location && data.Location.panoId);
       } catch (e) {
         return false;
@@ -265,7 +305,7 @@
       bboxRectangle = L.rectangle(bounds, { color: "#89b4fa", weight: 2, fillOpacity: 0.05 }).addTo(map);
       map.fitBounds(bounds);
 
-      // Query OpenStreetMap via free Overpass API for road geometries inside bounding box
+      // Fetch roads inside bounding box via Overpass API
       const overpassQuery = `
         [out:json][timeout:25];
         (
@@ -285,14 +325,12 @@
         const data = await response.json();
         const nodes = {};
         
-        // Cache node coordinates
         data.elements.forEach(el => {
           if (el.type === 'node') {
             nodes[el.id] = [el.lat, el.lon];
           }
         });
 
-        // Collect road segments
         const ways = data.elements.filter(el => el.type === 'way');
         if (ways.length === 0) {
           statusLabel.innerText = 'No roads found in bounding box.';
@@ -300,14 +338,12 @@
           return;
         }
 
-        // Sample points along roads
         const samplePoints = [];
         ways.forEach(way => {
           for (let i = 0; i < way.nodes.length - 1; i++) {
             const p1 = nodes[way.nodes[i]];
             const p2 = nodes[way.nodes[i+1]];
             if (p1 && p2) {
-              // Midpoint sampling for optimal coverage testing
               const midLat = (p1[0] + p2[0]) / 2;
               const midLng = (p1[1] + p2[1]) / 2;
               samplePoints.push({ lat: midLat, lng: midLng, p1, p2 });
@@ -320,7 +356,6 @@
         let coveredCount = 0;
         let checkedCount = 0;
 
-        // Process points in parallel batches
         const batchSize = 10;
         for (let i = 0; i < samplePoints.length; i += batchSize) {
           const batch = samplePoints.slice(i, i + batchSize);
@@ -329,9 +364,8 @@
             const hasSV = await checkStreetViewCoverage(point.lat, point.lng);
             if (hasSV) coveredCount++;
 
-            // Draw line on map colored by coverage state
             const lineColor = hasSV ? '#a6e3a1' : '#f38ba8';
-            L.polyline([point.p1, point.p2], { color: lineColor, weight: 4, opacity: 0.8 }).addTo(analyzedLayers);
+            L.polyline([point.p1, point.p2], { color: lineColor, weight: 4, opacity: 0.85 }).addTo(analyzedLayers);
           }));
 
           checkedCount += batch.length;
