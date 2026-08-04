@@ -289,8 +289,8 @@
 
       <div id="country-card" class="country-details">
         <div class="country-title">
-          <span id="c-name">Country Name</span>
-          <span id="c-flag">🏁</span>
+          <span id="c-name">Select a Country</span>
+          <span id="c-flag">🌐</span>
         </div>
         <div style="font-size:0.8rem; color:#94a3b8;">Estimated Paved Coverage</div>
         <div class="progress-bar-bg">
@@ -299,19 +299,19 @@
 
         <div class="detail-row">
           <span>Coverage Status:</span>
-          <span id="c-tier">Full</span>
+          <span id="c-tier">-</span>
         </div>
         <div class="detail-row">
           <span>Official Car Access:</span>
-          <span id="c-cars">Yes</span>
+          <span id="c-cars">-</span>
         </div>
         <div class="detail-row">
           <span>Primary Vehicle Type:</span>
-          <span id="c-vehicle">Standard Car / Gen 4</span>
+          <span id="c-vehicle">-</span>
         </div>
         <div class="detail-row">
           <span>Community Blue Dots:</span>
-          <span id="c-community">Active</span>
+          <span id="c-community">-</span>
         </div>
       </div>
     </div>
@@ -321,15 +321,13 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Initialize Leaflet Map
     const map = L.map('map', {
-      center: [20, 0],
-      zoom: 2,
+      center: [42.5, 21.0],
+      zoom: 6,
       minZoom: 2,
       maxZoom: 18
     });
 
-    // Base Layers
     const cartoDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap &copy; CARTO',
       subdomains: 'abcd',
@@ -342,7 +340,6 @@
       maxZoom: 20
     });
 
-    // Real Google Street View Coverage Lines Tile Layer
     const svCoverageLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=sv&x={x}&y={y}&z={z}', {
       attribution: '&copy; Google Street View',
       subdomains: ['0', '1', '2', '3'],
@@ -350,7 +347,6 @@
       opacity: 0.85
     }).addTo(map);
 
-    // Toggle Blue Lines Layer
     let svEnabled = true;
     const toggleBtn = document.getElementById('toggle-sv');
     toggleBtn.addEventListener('click', () => {
@@ -364,7 +360,6 @@
       }
     });
 
-    // Toggle Map Style
     document.getElementById('map-style').addEventListener('change', (e) => {
       if (e.target.value === 'satellite') {
         map.removeLayer(cartoDark);
@@ -375,7 +370,7 @@
       }
     });
 
-    // Global Dataset
+    // Dataset including correct ISO codes for Kosovo (XKX / KOS / XK) & North Macedonia (MKD)
     const coverageData = {
       "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
       "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
@@ -383,70 +378,36 @@
       "FRA": { name: "France", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇫🇷" },
       "ESP": { name: "Spain", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇸" },
       "ITA": { name: "Italy", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇹" },
-      "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes (Re-mapped)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
-      "NLD": { name: "Netherlands", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇱" },
-      "BEL": { name: "Belgium", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇪" },
-      "DNK": { name: "Denmark", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇰" },
-      "SWE": { name: "Sweden", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇪" },
-      "NOR": { name: "Norway", pct: 86, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇴" },
-      "FIN": { name: "Finland", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇫🇮" },
-      "JPN": { name: "Japan", pct: 96, tier: "High", cars: "Yes", vehicle: "Low-cam / Gen 4", flag: "🇯🇵" },
-      "KOR": { name: "South Korea", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇷" },
-      "AUS": { name: "Australia", pct: 91, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇺" },
-      "NZL": { name: "New Zealand", pct: 90, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇳🇿" },
-      "CHL": { name: "Chile", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇱" },
-      "PRT": { name: "Portugal", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇹" },
-      "IRL": { name: "Ireland", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇪" },
-      "HUN": { name: "Hungary", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇺" },
-      "CZE": { name: "Czech Republic", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇿" },
-      "SVK": { name: "Slovakia", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇰" },
-      "SVN": { name: "Slovenia", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇮" },
+      "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇩🇪" },
+      "ALB": { name: "Albania", pct: 75, tier: "High", cars: "Yes", vehicle: "Standard Hatchback / Smallcam", flag: "🇦🇱" },
+      
+      "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
+      "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
+      "XK":  { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
+      
+      "MKD": { name: "North Macedonia", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇰" },
+      "SRB": { name: "Serbia", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇸" },
+      "MNE": { name: "Montenegro", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇪" },
       "GRC": { name: "Greece", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇷" },
-
-      "ALB": { name: "Albania", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇱" },
-      "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "AUT": { name: "Austria", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇹" },
-      "POL": { name: "Poland", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
-      "ROU": { name: "Romania", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇴" },
-      "BGR": { name: "Bulgaria", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇬" },
-      "HRV": { name: "Croatia", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇷" },
-      "MEX": { name: "Mexico", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇽" },
-      "BRA": { name: "Brazil", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇷" },
-      "ARG": { name: "Argentina", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇷" },
-      "COL": { name: "Colombia", pct: 64, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇴" },
-      "PER": { name: "Peru", pct: 58, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇪" },
-      "ZAF": { name: "South Africa", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇿🇦" },
-      "TUR": { name: "Turkey", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇹🇷" },
-      "MYS": { name: "Malaysia", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇾" },
-      "THA": { name: "Thailand", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇭" },
-      "IDN": { name: "Indonesia", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Car & Scooter", flag: "🇮🇩" },
-      "IND": { name: "India", pct: 52, tier: "Medium", cars: "Yes", vehicle: "Car & Trike", flag: "🇮🇳" },
-
-      "RUS": { name: "Russia", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇺" },
-      "PHL": { name: "Philippines", pct: 39, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇭" },
-      "NGA": { name: "Nigeria", pct: 32, tier: "Partial", cars: "Yes", vehicle: "Car & Trekker", flag: "🇳🇬" },
-      "KEN": { name: "Kenya", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇪" },
-      "SEN": { name: "Senegal", pct: 24, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇳" },
-      "LKA": { name: "Sri Lanka", pct: 38, tier: "Partial", cars: "Yes", vehicle: "Car & Tuk-Tuk", flag: "🇱🇰" },
-      "JOR": { name: "Jordan", pct: 28, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
-      "RWA": { name: "Rwanda", pct: 20, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇼" },
-
-      "EGY": { name: "Egypt", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇪🇬" },
-      "CHN": { name: "China", pct: 3, tier: "Landmarks Only", cars: "No", vehicle: "Indoor Trekker", flag: "🇨🇳" },
-      "NPL": { name: "Nepal", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇳🇵" },
-      "IRQ": { name: "Iraq", pct: 4, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇮🇶" },
-      "PAK": { name: "Pakistan", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇰" },
-      "TZA": { name: "Tanzania", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker / Boat", flag: "🇹🇿" },
-      "GRL": { name: "Greenland", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile", flag: "🇬🇱" },
-      "MDG": { name: "Madagascar", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇲🇬" }
+      "TUR": { name: "Turkey", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇹🇷" }
     };
 
     let selectedTierFilter = "ALL";
 
-    function getColor(iso) {
-      const data = coverageData[iso];
-      if (!data) return '#334155';
+    function getDataByFeature(feature) {
+      const id = feature.id;
+      const name = feature.properties ? feature.properties.name : "";
+      
+      if (coverageData[id]) return coverageData[id];
+      if (name && (name === "Kosovo" || name.includes("Kosovo"))) return coverageData["KOS"];
+      if (name && (name.includes("Macedonia"))) return coverageData["MKD"];
+
+      return { name: name || id, pct: 0, tier: "No Official Coverage", cars: "No", vehicle: "N/A", flag: "🏳️" };
+    }
+
+    function getColorByFeature(feature) {
+      const data = getDataByFeature(feature);
+      if (!data || data.pct === 0) return '#334155';
       
       if (selectedTierFilter !== "ALL" && data.tier !== selectedTierFilter) {
         return '#1e293b';
@@ -472,15 +433,14 @@
     function renderGeoJson(data) {
       geojsonLayer = L.geoJson(data, {
         style: (feature) => ({
-          fillColor: getColor(feature.id),
+          fillColor: getColorByFeature(feature),
           weight: 1,
           opacity: 0.8,
           color: '#1e293b',
           fillOpacity: 0.45
         }),
         onEachFeature: (feature, layer) => {
-          const iso = feature.id;
-          const cData = coverageData[iso] || { name: feature.properties.name, pct: 0, tier: "No Official Coverage" };
+          const cData = getDataByFeature(feature);
 
           layer.bindTooltip(`<b>${cData.name}</b><br/>Coverage: ${cData.pct > 0 ? cData.pct + '%' : 'None'}`, {
             className: 'leaflet-tooltip-custom',
@@ -503,7 +463,6 @@
         }
       }).addTo(map);
 
-      // Ensure coverage lines sit over/under polygons appropriately
       svCoverageLayer.bringToFront();
     }
 
@@ -512,7 +471,7 @@
       card.classList.add('active');
 
       document.getElementById('c-name').innerText = data.name;
-      document.getElementById('c-flag').innerText = data.flag || '🏁';
+      document.getElementById('c-flag').innerText = data.flag || '🏳️';
       document.getElementById('c-progress').style.width = (data.pct || 0) + '%';
       document.getElementById('c-tier').innerText = data.tier || 'None';
       document.getElementById('c-cars').innerText = data.cars || 'No';
