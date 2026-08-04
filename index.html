@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Google Street View Coverage Statistics</title>
+
+  <!-- Leaflet CSS for Map Rendering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: #1e293b;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+      width: 220px;
+    }
+
+    input[type="text"]:focus {
+      border-color: #38bdf8;
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      background: #090d16;
+    }
+
+    .sidebar {
+      width: 360px;
+      background: #1e293b;
+      border-left: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem;
+      gap: 1.25rem;
+      overflow-y: auto;
+      z-index: 900;
+    }
+
+    .stat-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .stat-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .legend {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .legend h4 {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+    }
+
+    .color-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .country-details {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1.25rem;
+      display: none;
+    }
+
+    .country-details.active {
+      display: block;
+    }
+
+    .country-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-bar-bg {
+      background: #334155;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.5rem 0 1rem 0;
+    }
+
+    .progress-bar-fill {
+      background: #38bdf8;
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      color: #cbd5e1;
+    }
+
+    .detail-row span:last-child {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* Custom Leaflet Tooltip */
+    .leaflet-tooltip-custom {
+      background: #1e293b !important;
+      border: 1px solid #475569 !important;
+      color: #fff !important;
+      font-family: 'Inter', sans-serif !important;
+      border-radius: 6px !important;
+      padding: 6px 10px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: 40%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌐 Street View Global Coverage Tracker</h1>
+    <div class="controls">
+      <input type="text" id="search-input" placeholder="Search country (e.g., Kosovo)..." />
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div id="map"></div>
+
+    <div class="sidebar">
+      <div class="stat-card">
+        <h3>Global Road Coverage</h3>
+        <div class="value">~17%</div>
+        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Global land mass within 5km of SV panorama</p>
+      </div>
+
+      <div class="legend">
+        <h4>Coverage Tier Level</h4>
+        <div class="legend-item"><div class="color-box" style="background: #0284c7;"></div> Full / High Coverage (75%+ paved)</div>
+        <div class="legend-item"><div class="color-box" style="background: #0ea5e9;"></div> Medium Coverage (40% - 74%)</div>
+        <div class="legend-item"><div class="color-box" style="background: #38bdf8;"></div> Partial / Urban Focus (15% - 39%)</div>
+        <div class="legend-item"><div class="color-box" style="background: #f59e0b;"></div> Isolated / Tourist Spots (&lt; 15%)</div>
+        <div class="legend-item"><div class="color-box" style="background: #334155;"></div> No Official Coverage</div>
+      </div>
+
+      <div id="country-card" class="country-details">
+        <div class="country-title">
+          <span id="c-name">Country Name</span>
+          <span id="c-flag">🏁</span>
+        </div>
+        <div style="font-size:0.8rem; color:#94a3b8;">Estimated Paved Coverage</div>
+        <div class="progress-bar-bg">
+          <div id="c-progress" class="progress-bar-fill"></div>
+        </div>
+
+        <div class="detail-row">
+          <span>Coverage Status:</span>
+          <span id="c-tier">Full</span>
+        </div>
+        <div class="detail-row">
+          <span>Official Car Access:</span>
+          <span id="c-cars">Yes</span>
+        </div>
+        <div class="detail-row">
+          <span>Primary Vehicle Type:</span>
+          <span id="c-vehicle">Standard Car / Gen 4</span>
+        </div>
+        <div class="detail-row">
+          <span>Community Blue Dots:</span>
+          <span id="c-community">Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Initialize Map
+    const map = L.map('map', {
+      center: [20, 0],
+      zoom: 2,
+      minZoom: 2,
+      maxZoom: 7
+    });
+
+    // Dark Map Tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Country Coverage Dataset (Sample Data based on GeoGuessr / Wikipedia Datasets)
+    const coverageData = {
+      "USA": { name: "United States", pct: 92, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
+      "GBR": { name: "United Kingdom", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇧" },
+      "DEU": { name: "Germany", pct: 65, tier: "Medium", cars: "Yes (Re-mapped)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
+      "KXK": { name: "Kosovo", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
+      "ALB": { name: "Albania", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇱" },
+      "FRA": { name: "France", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇫🇷" },
+      "JPN": { name: "Japan", pct: 94, tier: "High", cars: "Yes", vehicle: "Low-cam & Standard", flag: "🇯🇵" },
+      "BRA": { name: "Brazil", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇷" },
+      "IND": { name: "India", pct: 35, tier: "Partial", cars: "Yes (Partnered)", vehicle: "Car & Trike", flag: "🇮🇳" },
+      "EGY": { name: "Egypt", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇪🇬" },
+      "CHN": { name: "China", pct: 2, tier: "Landmarks Only", cars: "No", vehicle: "Indoor Trekker", flag: "🇨🇳" },
+      "AUS": { name: "Australia", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇺" }
+    };
+
+    function getColor(iso) {
+      const data = coverageData[iso];
+      if (!data) return '#334155'; // No coverage / Unknown
+      if (data.pct >= 75) return '#0284c7';
+      if (data.pct >= 40) return '#0ea5e9';
+      if (data.pct >= 15) return '#38bdf8';
+      return '#f59e0b';
+    }
+
+    let geojsonLayer;
+
+    // Fetch GeoJSON World Boundaries
+    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+      .then(res => res.json())
+      .then(data => {
+        geojsonLayer = L.geoJson(data, {
+          style: (feature) => ({
+            fillColor: getColor(feature.id),
+            weight: 1,
+            opacity: 1,
+            color: '#1e293b',
+            fillOpacity: 0.7
+          }),
+          onEachFeature: (feature, layer) => {
+            const iso = feature.id;
+            const cData = coverageData[iso] || { name: feature.properties.name, pct: 0, tier: "No Official Coverage" };
+
+            layer.bindTooltip(`<b>${cData.name}</b><br/>Coverage: ${cData.pct}%`, {
+              className: 'leaflet-tooltip-custom',
+              direction: 'top'
+            });
+
+            layer.on({
+              mouseover: (e) => {
+                const l = e.target;
+                l.setStyle({ weight: 2, color: '#38bdf8', fillOpacity: 0.9 });
+                l.bringToFront();
+              },
+              mouseout: (e) => {
+                geojsonLayer.resetStyle(e.target);
+              },
+              click: () => {
+                showCountryDetails(cData);
+              }
+            });
+          }
+        }).addTo(map);
+      });
+
+    function showCountryDetails(data) {
+      const card = document.getElementById('country-card');
+      card.classList.add('active');
+
+      document.getElementById('c-name').innerText = data.name;
+      document.getElementById('c-flag').innerText = data.flag || '🏳️';
+      document.getElementById('c-progress').style.width = (data.pct || 0) + '%';
+      document.getElementById('c-tier').innerText = data.tier || 'None';
+      document.getElementById('c-cars').innerText = data.cars || 'No';
+      document.getElementById('c-vehicle').innerText = data.vehicle || 'N/A';
+      document.getElementById('c-community').innerText = 'Active';
+    }
+
+    // Search bar functionality
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      if (!query) return;
+
+      for (const [key, value] of Object.entries(coverageData)) {
+        if (value.name.toLowerCase().includes(query)) {
+          showCountryDetails(value);
+          break;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
