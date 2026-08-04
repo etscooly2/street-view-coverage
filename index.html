@@ -175,19 +175,15 @@
       <div class="legend-list">
         <div class="legend-item">
           <div class="legend-box" style="background: #0284c7;"></div>
-          <span>Full Coverage (75% - 100%)</span>
+          <span>Full Official Coverage</span>
         </div>
         <div class="legend-item">
           <div class="legend-box" style="background: #38bdf8;"></div>
-          <span>Medium Coverage (40% - 74%)</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-box" style="background: #7dd3fc;"></div>
-          <span>Partial Coverage (15% - 39%)</span>
+          <span>Medium / Partial Coverage</span>
         </div>
         <div class="legend-item">
           <div class="legend-box" style="background: #f59e0b;"></div>
-          <span>Isolated / Landmarks (< 15%)</span>
+          <span>Landmarks Only / Trekker</span>
         </div>
         <div class="legend-item">
           <div class="legend-box" style="background: #334155;"></div>
@@ -233,44 +229,133 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Master database mapping ISO 3-letter codes to Street View coverage metrics
+    // Wikipedia-aligned Street View coverage database for ISO 3-letter country codes
     const streetViewData = {
-      // Full Coverage (75% - 100%)
+      // NORTH AMERICA
       "USA": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Trekker Car", dots: "Active" },
       "CAN": { pct: 88, status: "Full", car: "Yes", vehicle: "Gen 4 Pickup", dots: "Active" },
+      "MEX": { pct: 82, status: "Full", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "GTM": { pct: 55, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "CRI": { pct: 50, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "PAN": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "DOM": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "PRI": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "CUW": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+
+      // SOUTH AMERICA
+      "ARG": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "BRA": { pct: 75, status: "Full", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "CHL": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
+      "COL": { pct: 70, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "PER": { pct: 65, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "ECU": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "BOL": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "URY": { pct: 75, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "PRY": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+
+      // EUROPE
       "FRA": { pct: 92, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "ESP": { pct: 94, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "DEU": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "ITA": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "GBR": { pct: 96, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "JPN": { pct: 98, status: "Full", car: "Yes", vehicle: "Gen 4 Compact Car", dots: "Active" },
-      "AUS": { pct: 89, status: "Full", car: "Yes", vehicle: "Gen 4 SUV", dots: "Active" },
-
-      // Medium Coverage (40% - 74%)
+      "PRT": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "NLD": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "BEL": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "CHE": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "AUT": { pct: 75, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "SWE": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "NOR": { pct: 88, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "FIN": { pct: 88, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "DNK": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "IRL": { pct: 92, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "POL": { pct: 88, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "CZE": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "SVK": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "HUN": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "ROU": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "BGR": { pct: 78, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "GRC": { pct: 82, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "HRV": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "SVN": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "EST": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "LVA": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "LTU": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "SRB": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "ALB": { pct: 55, status: "Medium", car: "Yes", vehicle: "Gen 3 Hatchback", dots: "Active" },
+      "MNE": { pct: 50, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
       "XKX": { pct: 62, status: "Medium", car: "Yes", vehicle: "Standard Hatchback", dots: "Active" },
       "KOS": { pct: 62, status: "Medium", car: "Yes", vehicle: "Standard Hatchback", dots: "Active" },
-      "GRC": { pct: 68, status: "Medium", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
-      "ROU": { pct: 72, status: "Medium", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
-      "BGR": { pct: 65, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "MKD": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "UKR": { pct: 65, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "TUR": { pct: 70, status: "Medium", car: "Yes", vehicle: "Gen 3 / 4 Sedan", dots: "Active" },
+      "RUS": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "AND": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "SMR": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "MCO": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "MLT": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "LUX": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "ISL": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
 
-      // Partial Coverage (15% - 39%)
-      "ALB": { pct: 35, status: "Partial", car: "Yes", vehicle: "Gen 3 Hatchback", dots: "Active" },
-      "SRB": { pct: 38, status: "Partial", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "TUR": { pct: 30, status: "Partial", car: "Yes", vehicle: "Gen 3 / 4 Sedan", dots: "Active" },
+      // ASIA
+      "JPN": { pct: 98, status: "Full", car: "Yes", vehicle: "Gen 4 Compact Car", dots: "Active" },
+      "KOR": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "TWN": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Car / Trike", dots: "Active" },
+      "HKG": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "MAC": { pct: 95, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "THA": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "MYS": { pct: 80, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "SGP": { pct: 98, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "IDN": { pct: 75, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "PHL": { pct: 70, status: "Medium", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "VNM": { pct: 30, status: "Partial", car: "Yes", vehicle: "Gen 3 / Motorbike", dots: "Active" },
+      "KHM": { pct: 50, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "LAO": { pct: 35, status: "Partial", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "BGD": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "BTN": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "LKA": { pct: 70, status: "Medium", car: "Yes", vehicle: "Gen 3 Car / TukTuk", dots: "Active" },
+      "IND": { pct: 65, status: "Medium", car: "Yes", vehicle: "Gen 4 Car (Partnered)", dots: "Active" },
+      "NPL": { pct: 25, status: "Partial", car: "Yes", vehicle: "Trekker / Car", dots: "Active" },
+      "MNG": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 3 Pickup", dots: "Active" },
+      "KAZ": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "KGZ": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "ISR": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "JOR": { pct: 50, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "ARE": { pct: 75, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "QAT": { pct: 70, status: "Medium", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+      "OMN": { pct: 35, status: "Partial", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
 
-      // Isolated / Landmarks (< 15%)
-      "MNE": { pct: 12, status: "Isolated / Landmarks", car: "Limited", vehicle: "Trekker / Backpack", dots: "Active" },
-      "IND": { pct: 10, status: "Isolated / Landmarks", car: "Limited", vehicle: "Trekker / Trike", dots: "Active" },
+      // AFRICA
+      "ZAF": { pct: 85, status: "Full", car: "Yes", vehicle: "Gen 3 / 4 Car", dots: "Active" },
+      "BWA": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 Pickup", dots: "Active" },
+      "LSO": { pct: 55, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "SWZ": { pct: 60, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "KEN": { pct: 50, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "UGA": { pct: 35, status: "Partial", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "NGA": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "GHA": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "SEN": { pct: 40, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "RWA": { pct: 30, status: "Partial", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      "TUN": { pct: 45, status: "Medium", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
 
-      // No Official Coverage
-      "MKD": { pct: 0, status: "No Official Coverage", car: "No", vehicle: "None", dots: "Sparse" },
-      "BIH": { pct: 0, status: "No Official Coverage", car: "No", vehicle: "None", dots: "Sparse" }
+      // OCEANIA
+      "AUS": { pct: 89, status: "Full", car: "Yes", vehicle: "Gen 4 SUV", dots: "Active" },
+      "NZL": { pct: 90, status: "Full", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
+
+      // LANDMARKS / TREKKER ONLY
+      "EGY": { pct: 10, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "CHN": { pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "PAK": { pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "AFG": { pct: 2, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "IRQ": { pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "TZA": { pct: 10, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
+      "MDG": { pct: 8, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" }
     };
 
     // Initialize Map
     const map = L.map('map', {
-      center: [42.5, 21.0],
-      zoom: 6,
+      center: [20.0, 0.0],
+      zoom: 3,
       zoomControl: false
     });
 
@@ -280,10 +365,9 @@
     function getColor(iso) {
       const data = streetViewData[iso];
       if (!data || data.pct === 0) return '#334155'; // Dark Grey (No Coverage)
-      if (data.pct >= 75) return '#0284c7';        // Deep Blue (Full)
-      if (data.pct >= 40) return '#38bdf8';        // Cyan Blue (Medium)
-      if (data.pct >= 15) return '#7dd3fc';        // Light Blue (Partial)
-      return '#f59e0b';                            // Yellow/Amber (Landmarks)
+      if (data.pct >= 75) return '#0284c7';        // Deep Blue (Full Coverage)
+      if (data.pct >= 15) return '#38bdf8';        // Bright Blue (Medium/Partial Coverage)
+      return '#f59e0b';                            // Amber (Landmarks Only)
     }
 
     let geojsonLayer;
@@ -297,9 +381,9 @@
           style: function(feature) {
             return {
               fillColor: getColor(feature.id),
-              fillOpacity: 0.7,
+              fillOpacity: 0.75,
               color: '#38bdf8',
-              weight: 1.2,
+              weight: 1.0,
               opacity: 0.8
             };
           },
@@ -320,7 +404,7 @@
               mouseover: function(e) {
                 const l = e.target;
                 if (l !== selectedLayer) {
-                  l.setStyle({ fillOpacity: 0.9, weight: 2.5, color: '#ffffff' });
+                  l.setStyle({ fillOpacity: 0.95, weight: 2.2, color: '#ffffff' });
                 }
               },
               mouseout: function(e) {
@@ -334,21 +418,13 @@
                   geojsonLayer.resetStyle(selectedLayer);
                 }
                 selectedLayer = e.target;
-                selectedLayer.setStyle({ fillOpacity: 0.95, weight: 3, color: '#ffffff' });
+                selectedLayer.setStyle({ fillOpacity: 1.0, weight: 3, color: '#ffffff' });
                 
                 updateSidebar(countryName, iso, data);
               }
             });
           }
         }).addTo(map);
-
-        // Pre-select Kosovo on initialization
-        geojsonLayer.eachLayer(function(layer) {
-          if (layer.feature.id === "XKX" || layer.feature.properties.name === "Kosovo") {
-            layer.fire('click');
-            map.fitBounds(layer.getBounds(), { padding: [50, 50] });
-          }
-        });
       });
 
     // Sidebar Update Function
@@ -364,10 +440,8 @@
       barFill.style.width = data.pct + '%';
       
       // Dynamic Bar Color
-      if (data.pct >= 40) {
+      if (data.pct >= 15) {
         barFill.style.background = '#38bdf8';
-      } else if (data.pct >= 15) {
-        barFill.style.background = '#7dd3fc';
       } else if (data.pct > 0) {
         barFill.style.background = '#f59e0b';
       } else {
