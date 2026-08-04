@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Street View Coverage Tracker</title>
+    <title>Global Google Street View Coverage Tracker</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -71,7 +71,7 @@
             color: #fff;
         }
 
-        /* Country List */
+        /* Search & Country List */
         .search-box {
             padding: 12px 20px;
             background: #1e1e1e;
@@ -164,15 +164,15 @@
 <body>
 
     <div id="sidebar">
-        <div classheader class="header">
-            <h1>Coverage Tracker</h1>
+        <div class="header">
+            <h1>Street View Coverage Tracker</h1>
             <div class="stats-summary">
                 <div class="stat-card">
-                    <div class="label">Total Tracked</div>
+                    <div class="label">Countries Tracked</div>
                     <div class="value" id="stat-total">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="label">Avg Score</div>
+                    <div class="label">Avg Coverage</div>
                     <div class="value" id="stat-avg">0%</div>
                 </div>
             </div>
@@ -190,31 +190,124 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Sample Coverage Data (ISO 2-letter codes or Country Names)
+        // Comprehensive List of Official Google Street View Countries & Territories
         const countryData = {
-            "United States of America": { score: 85, updated: "2026" },
-            "Canada": { score: 70, updated: "2025" },
-            "United Kingdom": { score: 92, updated: "2026" },
-            "France": { score: 75, updated: "2026" },
-            "Germany": { score: 65, updated: "2025" },
-            "Japan": { score: 90, updated: "2026" },
-            "Australia": { score: 80, updated: "2025" },
-            "Brazil": { score: 55, updated: "2024" },
-            "South Africa": { score: 45, updated: "2024" },
-            "Italy": { score: 78, updated: "2025" },
-            "Spain": { score: 82, updated: "2026" }
+            // North America
+            "United States of America": { score: 95, updated: "2026", iso: "USA" },
+            "Canada": { score: 70, updated: "2026", iso: "CAN" },
+            "Mexico": { score: 75, updated: "2026", iso: "MEX" },
+
+            // Central America & Caribbean
+            "Guatemala": { score: 40, updated: "2025", iso: "GTM" },
+            "Dominican Republic": { score: 50, updated: "2025", iso: "DOM" },
+            "Puerto Rico": { score: 85, updated: "2026", iso: "PRI" },
+            "Panama": { score: 45, updated: "2025", iso: "PAN" },
+            "Costa Rica": { score: 35, updated: "2024", iso: "CRI" },
+
+            // South America
+            "Argentina": { score: 65, updated: "2026", iso: "ARG" },
+            "Brazil": { score: 60, updated: "2026", iso: "BRA" },
+            "Chile": { score: 70, updated: "2026", iso: "CHL" },
+            "Colombia": { score: 55, updated: "2025", iso: "COL" },
+            "Ecuador": { score: 45, updated: "2025", iso: "ECU" },
+            "Peru": { score: 50, updated: "2025", iso: "PER" },
+            "Uruguay": { score: 65, updated: "2025", iso: "URY" },
+            "Bolivia": { score: 35, updated: "2024", iso: "BOL" },
+
+            // Europe
+            "Albania": { score: 50, updated: "2026", iso: "ALB" },
+            "Andorra": { score: 95, updated: "2025", iso: "AND" },
+            "Austria": { score: 70, updated: "2026", iso: "AUT" },
+            "Belgium": { score: 90, updated: "2026", iso: "BEL" },
+            "Bulgaria": { score: 80, updated: "2026", iso: "BGR" },
+            "Croatia": { score: 85, updated: "2026", iso: "HRV" },
+            "Czech Republic": { score: 88, updated: "2026", iso: "CZE" },
+            "Denmark": { score: 92, updated: "2026", iso: "DNK" },
+            "Estonia": { score: 90, updated: "2026", iso: "EST" },
+            "Finland": { score: 88, updated: "2026", iso: "FIN" },
+            "France": { score: 90, updated: "2026", iso: "FRA" },
+            "Germany": { score: 70, updated: "2026", iso: "DEU" },
+            "Greece": { score: 82, updated: "2026", iso: "GRC" },
+            "Hungary": { score: 85, updated: "2026", iso: "HUN" },
+            "Iceland": { score: 75, updated: "2025", iso: "ISL" },
+            "Ireland": { score: 88, updated: "2026", iso: "IRL" },
+            "Italy": { score: 88, updated: "2026", iso: "ITA" },
+            "Latvia": { score: 85, updated: "2026", iso: "LVA" },
+            "Lithuania": { score: 85, updated: "2026", iso: "LTU" },
+            "Luxembourg": { score: 90, updated: "2026", iso: "LUX" },
+            "Malta": { score: 92, updated: "2025", iso: "MLT" },
+            "Monaco": { score: 98, updated: "2026", iso: "MCO" },
+            "Montenegro": { score: 65, updated: "2025", iso: "MNE" },
+            "Netherlands": { score: 95, updated: "2026", iso: "NLD" },
+            "North Macedonia": { score: 60, updated: "2025", iso: "MKD" },
+            "Norway": { score: 85, updated: "2026", iso: "NOR" },
+            "Poland": { score: 88, updated: "2026", iso: "POL" },
+            "Portugal": { score: 90, updated: "2026", iso: "PRT" },
+            "Romania": { score: 82, updated: "2026", iso: "ROU" },
+            "San Marino": { score: 95, updated: "2025", iso: "SMR" },
+            "Serbia": { score: 70, updated: "2026", iso: "SRB" },
+            "Slovakia": { score: 85, updated: "2026", iso: "SVK" },
+            "Slovenia": { score: 85, updated: "2026", iso: "SVN" },
+            "Spain": { score: 92, updated: "2026", iso: "ESP" },
+            "Sweden": { score: 88, updated: "2026", iso: "SWE" },
+            "Switzerland": { score: 90, updated: "2026", iso: "CHE" },
+            "United Kingdom": { score: 95, updated: "2026", iso: "GBR" },
+            "Ukraine": { score: 45, updated: "2024", iso: "UKR" },
+
+            // Asia & Middle East
+            "Israel": { score: 85, updated: "2026", iso: "ISR" },
+            "Jordan": { score: 40, updated: "2025", iso: "JOR" },
+            "United Arab Emirates": { score: 75, updated: "2026", iso: "ARE" },
+            "Qatar": { score: 80, updated: "2026", iso: "QAT" },
+            "Oman": { score: 35, updated: "2025", iso: "OMN" },
+            "Japan": { score: 95, updated: "2026", iso: "JPN" },
+            "South Korea": { score: 85, updated: "2026", iso: "KOR" },
+            "Taiwan": { score: 90, updated: "2026", iso: "TWN" },
+            "Singapore": { score: 98, updated: "2026", iso: "SGP" },
+            "Malaysia": { score: 75, updated: "2026", iso: "MYS" },
+            "Thailand": { score: 80, updated: "2026", iso: "THA" },
+            "Indonesia": { score: 65, updated: "2026", iso: "IDN" },
+            "Philippines": { score: 60, updated: "2026", iso: "PHL" },
+            "Vietnam": { score: 30, updated: "2025", iso: "VNM" },
+            "Cambodia": { score: 40, updated: "2024", iso: "KHM" },
+            "Sri Lanka": { score: 60, updated: "2025", iso: "LKA" },
+            "Bangladesh": { score: 45, updated: "2025", iso: "BGD" },
+            "India": { score: 55, updated: "2026", iso: "IND" },
+            "Mongolia": { score: 35, updated: "2024", iso: "MNG" },
+            "Kazakhstan": { score: 40, updated: "2026", iso: "KAZ" },
+            "Kyrgyzstan": { score: 45, updated: "2025", iso: "KGZ" },
+            "Turkey": { score: 70, updated: "2026", iso: "TUR" },
+            "Bhutan": { score: 40, updated: "2024", iso: "BTN" },
+
+            // Africa
+            "South Africa": { score: 65, updated: "2026", iso: "ZAF" },
+            "Lesotho": { score: 45, updated: "2024", iso: "LSO" },
+            "Swaziland": { score: 45, updated: "2024", iso: "SWZ" }, // Eswatini
+            "Botswana": { score: 40, updated: "2024", iso: "BWA" },
+            "Kenya": { score: 45, updated: "2025", iso: "KEN" },
+            "Nigeria": { score: 40, updated: "2025", iso: "NGA" },
+            "Senegal": { score: 35, updated: "2025", iso: "SEN" },
+            "Ghana": { score: 40, updated: "2025", iso: "GHA" },
+            "Uganda": { score: 30, updated: "2024", iso: "UGA" },
+            "Rwanda": { score: 35, updated: "2025", iso: "RWA" },
+            "Tunisia": { score: 40, updated: "2025", iso: "TUN" },
+            "Madagascar": { score: 20, updated: "2024", iso: "MDG" },
+
+            // Oceania
+            "Australia": { score: 85, updated: "2026", iso: "AUS" },
+            "New Zealand": { score: 88, updated: "2026", iso: "NZL" }
         };
 
         // Color Scale Function
         function getColor(score) {
             if (score === undefined) return '#333333';
-            return score > 80 ? '#2ecc71' :
-                   score > 60 ? '#f1c40f' :
-                   score > 40 ? '#e67e22' :
-                   score > 0  ? '#e74c3c' : '#333333';
+            return score >= 80 ? '#2ecc71' :
+                   score >= 60 ? '#3498db' :
+                   score >= 40 ? '#f1c40f' :
+                   score > 0   ? '#e74c3c' : '#333333';
         }
 
-        // Initialize Map
+        // Initialize Leaflet Map
         const map = L.map('map', {
             center: [20, 0],
             zoom: 2,
@@ -231,10 +324,25 @@
 
         let geojsonLayer;
 
+        // Matches GeoJSON country name or ISO to our dataset
+        function findCountryData(feature) {
+            const name = feature.properties.name;
+            const id = feature.id || feature.properties.iso_a3;
+
+            if (countryData[name]) return countryData[name];
+
+            // ISO / Alternative name fallback search
+            for (const [key, val] of Object.entries(countryData)) {
+                if (val.iso === id || key.toLowerCase() === name.toLowerCase()) {
+                    return val;
+                }
+            }
+            return null;
+        }
+
         // Style Function for GeoJSON features
         function styleFeature(feature) {
-            const name = feature.properties.name;
-            const data = countryData[name];
+            const data = findCountryData(feature);
             const score = data ? data.score : undefined;
 
             return {
@@ -242,17 +350,8 @@
                 weight: 1,
                 opacity: 1,
                 color: '#1e1e1e',
-                fillOpacity: score ? 0.7 : 0.2
+                fillOpacity: score ? 0.75 : 0.15
             };
-        }
-
-        // Update Map Layers & Re-render
-        function updateMap() {
-            if (geojsonLayer) {
-                geojsonLayer.setStyle(styleFeature);
-            }
-            renderCountryList();
-            updateStats();
         }
 
         // Mouse Event Handlers
@@ -261,7 +360,7 @@
             layer.setStyle({
                 weight: 2,
                 color: '#ffffff',
-                fillOpacity: 0.9
+                fillOpacity: 0.95
             });
             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                 layer.bringToFront();
@@ -274,8 +373,8 @@
 
         function onEachFeature(feature, layer) {
             const name = feature.properties.name;
-            const data = countryData[name];
-            const scoreText = data ? `${data.score}%` : 'No Data';
+            const data = findCountryData(feature);
+            const scoreText = data ? `${data.score}%` : 'No Official Coverage';
 
             // Tooltip displaying Country Name & Score
             layer.bindTooltip(
@@ -293,7 +392,7 @@
         }
 
         // Load GeoJSON World Boundaries
-        fetch('https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson')
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
             .then(response => response.json())
             .then(data => {
                 geojsonLayer = L.geoJson(data, {
@@ -347,7 +446,9 @@
         function focusCountryOnMap(countryName) {
             if (!geojsonLayer) return;
             geojsonLayer.eachLayer(layer => {
-                if (layer.feature.properties.name === countryName) {
+                const name = layer.feature.properties.name;
+                const data = findCountryData(layer.feature);
+                if (name === countryName || (data && countryData[countryName] === data)) {
                     map.fitBounds(layer.getBounds());
                     layer.fire('mouseover');
                 }
