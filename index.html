@@ -190,9 +190,7 @@
                 <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
             </div>
             <select id="filter-select" class="filter-select" onchange="filterCountries()">
-                <option value="all">All Tracked</option>
                 <option value="official">Official Street View</option>
-                <option value="none">No Coverage</option>
             </select>
         </div>
 
@@ -204,7 +202,7 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Exhaustive Full Dataset: Exactly 110 Sovereign Countries & Territories with Official Street View Support
+        // Exhaustive Full Dataset: Exactly Sovereign Countries & Territories with Official Street View Support (score > 0)
         const countryData = {
             // NORTH AMERICA, CENTRAL AMERICA & CARIBBEAN
             "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
@@ -398,17 +396,29 @@
             const data = findCountryData(feature);
             const score = data ? data.score : 0;
 
+            if (score === 0) {
+                return {
+                    fillColor: 'transparent',
+                    weight: 0,
+                    opacity: 0,
+                    fillOpacity: 0
+                };
+            }
+
             return {
                 fillColor: getColor(score),
                 weight: 1,
                 opacity: 1,
                 color: '#1e1e1e',
-                fillOpacity: score > 0 ? 0.75 : 0.25
+                fillOpacity: 0.75
             };
         }
 
         function highlightFeature(e) {
             const layer = e.target;
+            const data = findCountryData(layer.feature);
+            if (!data || data.score === 0) return;
+
             layer.setStyle({
                 weight: 2,
                 color: '#ffffff',
@@ -424,9 +434,14 @@
         }
 
         function onEachFeature(feature, layer) {
-            const name = feature.properties.name;
             const data = findCountryData(feature);
-            const scoreText = (data && data.score > 0) ? `${data.score}%` : 'No Official Coverage';
+            if (!data || data.score === 0) {
+                layer.setStyle({ fillOpacity: 0, weight: 0, opacity: 0 });
+                return;
+            }
+
+            const name = feature.properties.name;
+            const scoreText = `${data.score}%`;
 
             layer.bindTooltip(
                 `<strong>${name}</strong><br/>Status: ${scoreText}`,
@@ -453,7 +468,7 @@
             })
             .catch(err => console.error("Error loading GeoJSON data:", err));
 
-        function renderCountryList(filterText = '', filterType = 'all') {
+        function renderCountryList(filterText = '') {
             const listContainer = document.getElementById('country-list');
             listContainer.innerHTML = '';
 
@@ -462,13 +477,7 @@
                     const searchStr = filterText.toLowerCase();
                     const nameMatch = name.toLowerCase().includes(searchStr);
                     const aliasMatch = data.aliases && data.aliases.some(a => a.toLowerCase().includes(searchStr));
-                    const matchesSearch = nameMatch || aliasMatch;
-
-                    if (!matchesSearch) return false;
-
-                    if (filterType === 'official') return data.score > 0;
-                    if (filterType === 'none') return data.score === 0;
-                    return true;
+                    return (nameMatch || aliasMatch) && data.score > 0;
                 })
                 .sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]));
 
@@ -477,15 +486,13 @@
                 item.className = 'country-item';
                 item.onclick = () => focusCountryOnMap(name);
 
-                const isCovered = data.score > 0;
-
                 item.innerHTML = `
                     <div class="country-info">
                         <span class="country-name">${name}</span>
-                        <span class="country-subtext">${isCovered ? 'Updated: ' + data.updated : 'No Official Coverage'}</span>
+                        <span class="country-subtext">Updated: ${data.updated}</span>
                     </div>
                     <span class="score-badge" style="background-color: ${getColor(data.score)}">
-                        ${isCovered ? data.score + '%' : 'None'}
+                        ${data.score}%
                     </span>
                 `;
                 listContainer.appendChild(item);
@@ -494,16 +501,13 @@
 
         function filterCountries() {
             const query = document.getElementById('search-input').value;
-            const filterType = document.getElementById('filter-select').value;
-            renderCountryList(query, filterType);
+            renderCountryList(query);
         }
 
         function updateStats() {
-            const entries = Object.values(countryData);
+            const entries = Object.values(countryData).filter(e => e.score > 0);
             const total = entries.length;
-            const coveredEntries = entries.filter(e => e.score > 0);
-            const coveredCount = coveredEntries.length;
-            const avg = coveredCount > 0 ? Math.round(coveredEntries.reduce((acc, curr) => acc + curr.score, 0) / coveredCount) : 0;
+            const avg = total > 0 ? Math.round(entries.reduce((acc, curr) => acc + curr.score, 0) / total) : 0;
 
             document.getElementById('stat-total').innerText = total;
             document.getElementById('stat-avg').innerText = `${avg}%`;
@@ -514,7 +518,7 @@
             geojsonLayer.eachLayer(layer => {
                 const name = layer.feature.properties.name;
                 const data = findCountryData(layer.feature);
-                if (name === countryName || (data && countryData[countryName] === data)) {
+                if (data && (name === countryName || countryData[countryName] === data)) {
                     map.fitBounds(layer.getBounds());
                     layer.fire('mouseover');
                 }
