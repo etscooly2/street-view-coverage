@@ -262,9 +262,10 @@
 
     // Complete Database of official Google Street View coverage as of 2026
     const streetViewData = {
-      // EUROPE & BALKANS (Including Kosovo & Regional ISO variants)
+      // EUROPE & BALKANS (Including all Kosovo ISO variations: XKX, KOS, CS-KM)
       "XKX": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "KOS": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "CS-KM": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "ALB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Hatchback", dots: "Active" },
       "AND": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
       "AUT": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
@@ -398,69 +399,58 @@
       "NPL": { covered: false, isLandmark: true, pct: 12, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" }
     };
 
-    function getFeatureColor(iso) {
-      const data = streetViewData[iso];
-      if (data) {
-        if (data.covered) return '#0088ff';
-        if (data.isLandmark) return '#f59e0b';
+    // Helper lookup function to resolve country ISO regardless of legacy key format (e.g. CS-KM in johan/world.geo.json)
+    function resolveCountryData(feature) {
+      const id = feature.id;
+      const name = (feature.properties && feature.properties.name) ? feature.properties.name : "";
+
+      if (id === "CS-KM" || id === "XKX" || id === "KOS" || name.toLowerCase() === "kosovo") {
+        return { iso: "XKX", name: "Kosovo", ...streetViewData["XKX"] };
       }
+
+      if (streetViewData[id]) {
+        return { iso: id, name: name || id, ...streetViewData[id] };
+      }
+
+      return {
+        iso: id || "--",
+        name: name || "Unknown Region",
+        covered: false,
+        pct: 0,
+        status: "No Official Coverage",
+        car: "No",
+        vehicle: "None",
+        dots: "Sparse"
+      };
+    }
+
+    function getFeatureColor(data) {
+      if (data.covered) return '#0088ff';
+      if (data.isLandmark) return '#f59e0b';
       return '#1e293b';
     }
 
     let geojsonLayer;
     let selectedLayer = null;
 
-    // Custom fallback geometries for territories or special ISO keys like Kosovo if missing in base GeoJSON
-    const customGeometries = {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "id": "XKX",
-          "properties": { "name": "Kosovo" },
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": [[[20.6, 41.85], [21.8, 42.2], [21.7, 43.2], [20.8, 43.2], [20.0, 42.7], [20.6, 41.85]]]
-          }
-        }
-      ]
-    };
-
     fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
       .then(res => res.json())
       .then(geoJsonData => {
-        // Merge missing custom regions into feature set if not present
-        const existingIds = new Set(geoJsonData.features.map(f => f.id));
-        customGeometries.features.forEach(feat => {
-          if (!existingIds.has(feat.id)) {
-            geoJsonData.features.push(feat);
-          }
-        });
-
         geojsonLayer = L.geoJSON(geoJsonData, {
           style: function(feature) {
-            const iso = feature.id;
-            const covered = streetViewData[iso]?.covered;
+            const data = resolveCountryData(feature);
             return {
-              fillColor: getFeatureColor(iso),
-              fillOpacity: covered ? 0.8 : (streetViewData[iso]?.isLandmark ? 0.75 : 0.5),
-              color: covered ? '#38bdf8' : '#334155',
-              weight: covered ? 1.0 : 0.6,
+              fillColor: getFeatureColor(data),
+              fillOpacity: data.covered ? 0.85 : (data.isLandmark ? 0.75 : 0.5),
+              color: data.covered ? '#38bdf8' : '#334155',
+              weight: data.covered ? 1.0 : 0.6,
               opacity: 0.9
             };
           },
           onEachFeature: function(feature, layer) {
-            const countryName = feature.properties.name || "Unknown Region";
-            const iso = feature.id;
-            const data = streetViewData[iso] || { 
-              pct: 0, 
-              status: "No Official Coverage", 
-              car: "No", 
-              vehicle: "None", 
-              dots: "Sparse" 
-            };
+            const data = resolveCountryData(feature);
 
-            layer.bindTooltip(`<b>${countryName}</b><br>${data.status}`, {
+            layer.bindTooltip(`<b>${data.name}</b><br>${data.status}`, {
               className: 'country-tooltip',
               direction: 'top',
               sticky: true
@@ -494,7 +484,7 @@
                   color: '#ffffff' 
                 });
                 
-                updateSidebar(countryName, iso, data);
+                updateSidebar(data.name, data.iso, data);
               }
             });
           }
