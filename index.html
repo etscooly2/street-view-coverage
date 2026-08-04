@@ -3,513 +3,515 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Global Google Street View Coverage Map (2026)</title>
-  
-  <!-- Leaflet CSS -->
+  <title>World Country & Percentage Tracker</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
   <style>
+    :root {
+      --bg-dark: #0f172a;
+      --panel-bg: #1e293b;
+      --card-bg: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #475569;
+      --accent: #10b981;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
+
     body {
-      background-color: #070a12;
-      color: #f8fafc;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
       display: flex;
+      flex-direction: column;
+      height: 100vh;
       overflow: hidden;
     }
 
-    #map {
-      flex: 1;
-      height: 100%;
-      background: #070a12;
-    }
-
-    .sidebar {
-      width: 380px;
-      background: #0f172a;
-      border-left: 1px solid #1e293b;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      z-index: 1000;
-      box-shadow: -4px 0 20px rgba(0,0,0,0.6);
-      overflow-y: auto;
-    }
-
-    .title-card {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 1.2rem;
-    }
-
-    .title-card h1 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #38bdf8;
-      letter-spacing: -0.02em;
-    }
-
-    .title-card p {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      margin-top: 0.25rem;
-    }
-
-    .card {
-      background: #182238;
-      border: 1px solid #243452;
-      border-radius: 10px;
-      padding: 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-
-    .legend-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-    }
-
-    .legend-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #cbd5e1;
-    }
-
-    .legend-box {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-
-    .info-header {
+    header {
+      background-color: var(--panel-bg);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      background-color: var(--bg-dark);
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .main-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-content {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      background-color: #0b1120;
+    }
+
+    .list-container {
+      height: 100%;
+      overflow-y: auto;
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text-main);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-bar:focus {
+      outline: 2px solid var(--primary);
+    }
+
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    .country-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .country-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .country-name {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #38bdf8;
+      font-weight: 600;
+      font-size: 1rem;
     }
 
-    .country-code {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #0284c7;
-    }
-
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.875rem;
-      padding: 0.45rem 0;
-      border-bottom: 1px solid #1e293b;
-    }
-
-    .stat-row:last-child {
-      border-bottom: none;
-    }
-
-    .stat-label {
-      color: #94a3b8;
-      font-weight: 500;
-    }
-
-    .stat-value {
+    .country-percentage {
       font-weight: 700;
-      color: #f8fafc;
-      text-align: right;
-    }
-
-    .progress-container {
-      margin: 0.25rem 0 0.75rem 0;
+      color: var(--accent);
+      font-size: 1.125rem;
     }
 
     .progress-bar-bg {
-      background: #0f172a;
+      width: 100%;
       height: 8px;
+      background-color: var(--card-bg);
       border-radius: 4px;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
-      background: #0088ff;
-      width: 0%;
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background-color: var(--accent);
+      border-radius: 4px;
+      transition: width 0.3s ease;
     }
 
-    .leaflet-tooltip.country-tooltip {
-      background: #0f172a;
-      border: 1px solid #38bdf8;
-      color: #f8fafc;
-      font-family: 'Inter', sans-serif;
+    .stats-container {
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .summary-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .summary-title {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .summary-value {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .summary-subtext {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-box {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+    }
+
+    .stat-box-title {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-box-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .info-legend {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
       font-size: 0.85rem;
-      font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
 
-    .leaflet-tooltip-top:before {
-      border-top-color: #38bdf8;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
     }
   </style>
 </head>
 <body>
 
-  <div id="map"></div>
-
-  <div class="sidebar">
-    <div class="title-card">
-      <h1>Street View World Map</h1>
-      <p>Global official coverage dataset • Updated 2026</p>
+  <header>
+    <h1>World Percentage Dashboard</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('map-view')">Map View</button>
+      <button class="tab-btn" onclick="switchTab('list-view')">Countries List</button>
+      <button class="tab-btn" onclick="switchTab('percent-view')">% World Summary</button>
     </div>
+  </header>
 
-    <!-- Tier Legend -->
-    <div class="card">
-      <div class="legend-title">Coverage Status</div>
-      <div class="legend-list">
-        <div class="legend-item">
-          <div class="legend-box" style="background: #0088ff; border: 1px solid #38bdf8;"></div>
-          <span>Official Street View Coverage</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-box" style="background: #f59e0b; border: 1px solid #fbbf24;"></div>
-          <span>Landmarks / Trekker Only</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-box" style="background: #1e293b; border: 1px solid #334155;"></div>
-          <span>No Official Coverage</span>
-        </div>
+  <div class="main-container">
+    <div id="map-view" class="tab-content active">
+      <div id="map"></div>
+      <div class="info-legend">
+        <strong>Percentage Scale</strong>
+        <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> 80% - 100%</div>
+        <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div> 50% - 79%</div>
+        <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div> 20% - 49%</div>
+        <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div> 1% - 19%</div>
+        <div class="legend-item"><div class="legend-color" style="background: #334155;"></div> 0%</div>
       </div>
     </div>
 
-    <!-- Country Dynamic Sidebar -->
-    <div class="card">
-      <div class="info-header">
-        <div id="info-country" class="country-name">Select Country</div>
-        <div id="info-code" class="country-code">--</div>
+    <div id="list-view" class="tab-content">
+      <div class="list-container">
+        <input type="text" id="countrySearch" class="search-bar" placeholder="Search country name..." oninput="filterCountries()">
+        <div class="country-grid" id="countryGrid"></div>
       </div>
+    </div>
 
-      <div class="progress-container">
-        <div class="stat-label" style="margin-bottom: 0.3rem;">Estimated Paved Coverage</div>
-        <div class="progress-bar-bg">
-          <div id="info-bar" class="progress-bar-fill"></div>
+    <div id="percent-view" class="tab-content">
+      <div class="stats-container">
+        <div class="summary-card">
+          <div class="summary-title">Total World Score / Percentage</div>
+          <div class="summary-value" id="totalWorldPercent">0.00%</div>
+          <div class="summary-subtext">Calculated as the average percentage score across all recognized world countries.</div>
         </div>
-      </div>
 
-      <div class="stat-row">
-        <span class="stat-label">Coverage Status:</span>
-        <span id="info-status" class="stat-value">--</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Official Car Access:</span>
-        <span id="info-access" class="stat-value">--</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Primary Vehicle:</span>
-        <span id="info-vehicle" class="stat-value">--</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Community Blue Dots:</span>
-        <span id="info-dots" class="stat-value">--</span>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-box-title">Total Countries</div>
+            <div class="stat-box-value" id="totalCount">195</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-title">At 100% Score</div>
+            <div class="stat-box-value" id="hundredCount" style="color: #10b981;">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-title">Above 50% Score</div>
+            <div class="stat-box-value" id="aboveFiftyCount" style="color: #3b82f6;">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-title">At 0% Score</div>
+            <div class="stat-box-value" id="zeroCount" style="color: #ef4444;">0</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script>
-    // Initialize Leaflet map
-    const map = L.map('map', {
-      center: [20, 0],
-      zoom: 3,
-      minZoom: 2,
-      maxZoom: 8,
-      zoomControl: false,
-      worldCopyJump: true
-    });
+    const countryData = [
+      { name: "United States of America", iso: "USA", percentage: 100 },
+      { name: "Canada", iso: "CAN", percentage: 90 },
+      { name: "United Kingdom", iso: "GBR", percentage: 85 },
+      { name: "Germany", iso: "DEU", percentage: 80 },
+      { name: "France", iso: "FRA", percentage: 75 },
+      { name: "Japan", iso: "JPN", percentage: 95 },
+      { name: "Australia", iso: "AUS", percentage: 85 },
+      { name: "Brazil", iso: "BRA", percentage: 60 },
+      { name: "India", iso: "IND", percentage: 70 },
+      { name: "China", iso: "CHN", percentage: 65 },
+      { name: "Italy", iso: "ITA", percentage: 70 },
+      { name: "Spain", iso: "ESP", percentage: 75 },
+      { name: "Mexico", iso: "MEX", percentage: 50 },
+      { name: "South Korea", iso: "KOR", percentage: 90 },
+      { name: "Netherlands", iso: "NLD", percentage: 80 },
+      { name: "Argentina", iso: "ARG", percentage: 45 },
+      { name: "South Africa", iso: "ZAF", percentage: 40 },
+      { name: "Saudi Arabia", iso: "SAU", percentage: 55 },
+      { name: "Egypt", iso: "EGY", percentage: 35 },
+      { name: "Nigeria", iso: "NGA", percentage: 30 },
+      { name: "Sweden", iso: "SWE", percentage: 85 },
+      { name: "Norway", iso: "NOR", percentage: 90 },
+      { name: "Switzerland", iso: "CHE", percentage: 95 },
+      { name: "Turkey", iso: "TUR", percentage: 50 },
+      { name: "Indonesia", iso: "IDN", percentage: 40 },
+      { name: "Poland", iso: "POL", percentage: 65 },
+      { name: "Belgium", iso: "BEL", percentage: 75 },
+      { name: "Austria", iso: "AUT", percentage: 80 },
+      { name: "United Arab Emirates", iso: "ARE", percentage: 85 },
+      { name: "New Zealand", iso: "NZL", percentage: 90 },
+      { name: "Singapore", iso: "SGP", percentage: 95 },
+      { name: "Albania", iso: "ALB", percentage: 50 },
+      { name: "Greece", iso: "GRC", percentage: 60 },
+      { name: "Portugal", iso: "PRT", percentage: 70 },
+      { name: "Ireland", iso: "IRL", percentage: 80 },
+      { name: "Denmark", iso: "DNK", percentage: 85 },
+      { name: "Finland", iso: "FIN", percentage: 85 },
+      { name: "Ukraine", iso: "UKR", percentage: 30 },
+      { name: "Vietnam", iso: "VNM", percentage: 50 },
+      { name: "Thailand", iso: "THA", percentage: 55 },
+      { name: "Malaysia", iso: "MYS", percentage: 60 },
+      { name: "Chile", iso: "CHL", percentage: 65 },
+      { name: "Colombia", iso: "COL", percentage: 45 },
+      { name: "Peru", iso: "PER", percentage: 40 },
+      { name: "Pakistan", iso: "PAK", percentage: 25 },
+      { name: "Bangladesh", iso: "BGD", percentage: 30 },
+      { name: "Philippines", iso: "PHL", percentage: 45 },
+      { name: "Morocco", iso: "MAR", percentage: 40 },
+      { name: "Kenya", iso: "KEN", percentage: 35 }
+    ];
 
-    L.control.zoom({ position: 'topleft' }).addTo(map);
+    let map;
+    let geojsonLayer;
 
-    // Complete Database of official Google Street View coverage as of 2026
-    const streetViewData = {
-      // EUROPE & BALKANS (Including all Kosovo ISO variations: XKX, KOS, CS-KM)
-      "XKX": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "KOS": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "CS-KM": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ALB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Hatchback", dots: "Active" },
-      "AND": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "AUT": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "BEL": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "BIH": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "BGR": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "HRV": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "CZE": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "DNK": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "EST": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "FRO": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car / Sheep View", dots: "Active" },
-      "FIN": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "FRA": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "DEU": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "GIB": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GRC": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "HUN": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ISL": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "IRL": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ITA": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "LVA": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LIE": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LTU": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "LUX": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "MLT": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MCO": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MNE": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NLD": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "MKD": { covered: true, pct: 60, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NOR": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "POL": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "PRT": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "ROU": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "RUS": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "SMR": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SRB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SVK": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "SVN": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "ESP": { covered: true, pct: 96, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "SWE": { covered: true, pct: 94, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "CHE": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "UKR": { covered: true, pct: 68, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GBR": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "BLR": { covered: true, pct: 20, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+    function getColor(d) {
+      return d >= 80 ? '#10b981' :
+             d >= 50 ? '#3b82f6' :
+             d >= 20 ? '#f59e0b' :
+             d > 0   ? '#ef4444' :
+                       '#334155';
+    }
 
-      // NORTH AMERICA & CARIBBEAN
-      "USA": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Trekker Car", dots: "Active" },
-      "CAN": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Pickup / SUV", dots: "Active" },
-      "MEX": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Pickup", dots: "Active" },
-      "GRL": { covered: true, pct: 40, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car / Trekker", dots: "Active" },
-      "BMU": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SPM": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "CRI": { covered: true, pct: 55, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GTM": { covered: true, pct: 60, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "PAN": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "DOM": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "PRI": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "VIR": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "CUW": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MTQ": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "BLZ": { covered: true, pct: 30, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+    function initMap() {
+      map = L.map('map', {
+        center: [20, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxBounds: [[-90, -180], [90, 180]]
+      });
 
-      // SOUTH AMERICA
-      "ARG": { covered: true, pct: 82, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "BRA": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "CHL": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "COL": { covered: true, pct: 72, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "PER": { covered: true, pct: 68, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "ECU": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "BOL": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "PRY": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "URY": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
 
-      // ASIA & MIDDLE EAST
-      "JPN": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Compact", dots: "Active" },
-      "KOR": { covered: true, pct: 82, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "TWN": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car / Trike", dots: "Active" },
-      "HKG": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "MAC": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "THA": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "MYS": { covered: true, pct: 82, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "SGP": { covered: true, pct: 98, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "IDN": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "PHL": { covered: true, pct: 72, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "VNM": { covered: true, pct: 35, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 / Motorbike", dots: "Active" },
-      "KHM": { covered: true, pct: 55, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "LAO": { covered: true, pct: 40, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "BGD": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "BTN": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "LKA": { covered: true, pct: 72, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car / TukTuk", dots: "Active" },
-      "IND": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car (Partnered)", dots: "Active" },
-      "MNG": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Pickup", dots: "Active" },
-      "KAZ": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "KGZ": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "ISR": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "JOR": { covered: true, pct: 55, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "ARE": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "QAT": { covered: true, pct: 75, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "OMN": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "TUR": { covered: true, pct: 75, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Sedan", dots: "Active" },
+      fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+        .then(response => response.json())
+        .then(data => {
+          geojsonLayer = L.geoJSON(data, {
+            style: style,
+            onEachFeature: onEachFeature
+          }).addTo(map);
+        })
+        .catch(err => console.error("Could not load GeoJSON map data:", err));
+    }
 
-      // AFRICA
-      "ZAF": { covered: true, pct: 88, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Car", dots: "Active" },
-      "BWA": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Pickup", dots: "Active" },
-      "LSO": { covered: true, pct: 60, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SWZ": { covered: true, pct: 65, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "KEN": { covered: true, pct: 55, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "UGA": { covered: true, pct: 40, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NGA": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "GHA": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "SEN": { covered: true, pct: 45, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "RWA": { covered: true, pct: 35, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "TUN": { covered: true, pct: 50, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "NAM": { covered: true, pct: 40, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Pickup", dots: "Active" },
+    function getCountryPercentage(iso, name) {
+      const match = countryData.find(c => c.iso === iso || c.name.toLowerCase() === name.toLowerCase());
+      return match ? match.percentage : 0;
+    }
 
-      // OCEANIA & TERRITORIES
-      "AUS": { covered: true, pct: 90, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 SUV", dots: "Active" },
-      "NZL": { covered: true, pct: 92, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Car", dots: "Active" },
-      "GUM": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "MNP": { covered: true, pct: 80, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-      "ASM": { covered: true, pct: 75, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
-
-      // LANDMARKS / TREKKER ONLY
-      "EGY": { covered: false, isLandmark: true, pct: 10, status: "Landmarks Only", car: "No", vehicle: "Trekker / Backpack", dots: "Active" },
-      "CHN": { covered: false, isLandmark: true, pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "PAK": { covered: false, isLandmark: true, pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "AFG": { covered: false, isLandmark: true, pct: 2, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "IRQ": { covered: false, isLandmark: true, pct: 5, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "TZA": { covered: false, isLandmark: true, pct: 10, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "MDG": { covered: false, isLandmark: true, pct: 8, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" },
-      "NPL": { covered: false, isLandmark: true, pct: 12, status: "Landmarks Only", car: "No", vehicle: "Trekker", dots: "Active" }
-    };
-
-    // Helper lookup function to resolve country ISO regardless of legacy key format (e.g. CS-KM in johan/world.geo.json)
-    function resolveCountryData(feature) {
-      const id = feature.id;
-      const name = (feature.properties && feature.properties.name) ? feature.properties.name : "";
-
-      if (id === "CS-KM" || id === "XKX" || id === "KOS" || name.toLowerCase() === "kosovo") {
-        return { iso: "XKX", name: "Kosovo", ...streetViewData["XKX"] };
-      }
-
-      if (streetViewData[id]) {
-        return { iso: id, name: name || id, ...streetViewData[id] };
-      }
-
+    function style(feature) {
+      const pct = getCountryPercentage(feature.id, feature.properties.name);
       return {
-        iso: id || "--",
-        name: name || "Unknown Region",
-        covered: false,
-        pct: 0,
-        status: "No Official Coverage",
-        car: "No",
-        vehicle: "None",
-        dots: "Sparse"
+        fillColor: getColor(pct),
+        weight: 1,
+        opacity: 1,
+        color: '#475569',
+        fillOpacity: 0.7
       };
     }
 
-    function getFeatureColor(data) {
-      if (data.covered) return '#0088ff';
-      if (data.isLandmark) return '#f59e0b';
-      return '#1e293b';
+    function onEachFeature(feature, layer) {
+      const pct = getCountryPercentage(feature.id, feature.properties.name);
+      layer.bindTooltip(`<strong>${feature.properties.name}</strong><br/>Score: ${pct}%`, {
+        sticky: true
+      });
+      layer.on({
+        mouseover: (e) => {
+          const l = e.target;
+          l.setStyle({ weight: 2, color: '#f8fafc', fillOpacity: 0.9 });
+        },
+        mouseout: (e) => {
+          geojsonLayer.resetStyle(e.target);
+        }
+      });
     }
 
-    let geojsonLayer;
-    let selectedLayer = null;
+    function renderCountryList() {
+      const grid = document.getElementById('countryGrid');
+      grid.innerHTML = '';
 
-    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-      .then(res => res.json())
-      .then(geoJsonData => {
-        geojsonLayer = L.geoJSON(geoJsonData, {
-          style: function(feature) {
-            const data = resolveCountryData(feature);
-            return {
-              fillColor: getFeatureColor(data),
-              fillOpacity: data.covered ? 0.85 : (data.isLandmark ? 0.75 : 0.5),
-              color: data.covered ? '#38bdf8' : '#334155',
-              weight: data.covered ? 1.0 : 0.6,
-              opacity: 0.9
-            };
-          },
-          onEachFeature: function(feature, layer) {
-            const data = resolveCountryData(feature);
+      const sorted = [...countryData].sort((a, b) => b.percentage - a.percentage);
 
-            layer.bindTooltip(`<b>${data.name}</b><br>${data.status}`, {
-              className: 'country-tooltip',
-              direction: 'top',
-              sticky: true
-            });
-
-            layer.on({
-              mouseover: function(e) {
-                const l = e.target;
-                if (l !== selectedLayer) {
-                  l.setStyle({ 
-                    fillOpacity: 0.95, 
-                    weight: 2.0, 
-                    color: '#ffffff' 
-                  });
-                }
-              },
-              mouseout: function(e) {
-                const l = e.target;
-                if (l !== selectedLayer) {
-                  geojsonLayer.resetStyle(l);
-                }
-              },
-              click: function(e) {
-                if (selectedLayer) {
-                  geojsonLayer.resetStyle(selectedLayer);
-                }
-                selectedLayer = e.target;
-                selectedLayer.setStyle({ 
-                  fillOpacity: 1.0, 
-                  weight: 3.0, 
-                  color: '#ffffff' 
-                });
-                
-                updateSidebar(data.name, data.iso, data);
-              }
-            });
-          }
-        }).addTo(map);
+      sorted.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'country-card';
+        card.dataset.name = c.name.toLowerCase();
+        card.innerHTML = `
+          <div class="country-header">
+            <span class="country-name">${c.name}</span>
+            <span class="country-percentage">${c.percentage}%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: ${c.percentage}%; background-color: ${getColor(c.percentage)}"></div>
+          </div>
+        `;
+        grid.appendChild(card);
       });
+    }
 
-    function updateSidebar(name, code, data) {
-      document.getElementById('info-country').innerText = name;
-      document.getElementById('info-code').innerText = code;
-      document.getElementById('info-status').innerText = data.status;
-      document.getElementById('info-access').innerText = data.car;
-      document.getElementById('info-vehicle').innerText = data.vehicle;
-      document.getElementById('info-dots').innerText = data.dots;
+    function filterCountries() {
+      const query = document.getElementById('countrySearch').value.toLowerCase();
+      const cards = document.querySelectorAll('.country-card');
+      cards.forEach(card => {
+        if (card.dataset.name.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
 
-      const barFill = document.getElementById('info-bar');
-      barFill.style.width = data.pct + '%';
+    function calculateStats() {
+      const totalSum = countryData.reduce((acc, curr) => acc + curr.percentage, 0);
+      const avg = (totalSum / countryData.length).toFixed(2);
       
-      if (data.covered) {
-        barFill.style.background = '#0088ff';
-      } else if (data.isLandmark) {
-        barFill.style.background = '#f59e0b';
-      } else {
-        barFill.style.background = '#475569';
+      document.getElementById('totalWorldPercent').innerText = `${avg}%`;
+      document.getElementById('totalCount').innerText = countryData.length;
+      document.getElementById('hundredCount').innerText = countryData.filter(c => c.percentage === 100).length;
+      document.getElementById('aboveFiftyCount').innerText = countryData.filter(c => c.percentage >= 50).length;
+      document.getElementById('zeroCount').innerText = countryData.filter(c => c.percentage === 0).length;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      const activeContent = document.getElementById(tabId);
+      activeContent.classList.add('active');
+
+      if (tabId === 'map-view' && map) {
+        setTimeout(() => { map.invalidateSize(); }, 100);
       }
     }
+
+    window.onload = () => {
+      initMap();
+      renderCountryList();
+      calculateStats();
+    };
   </script>
 </body>
 </html>
