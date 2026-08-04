@@ -263,8 +263,8 @@
     // Complete Database of official Google Street View coverage as of 2026
     const streetViewData = {
       // EUROPE & BALKANS (Including Kosovo & Regional ISO variants)
-      "XKX": { covered: true, pct: 78, status: "Official Coverage (2026)", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
-      "KOS": { covered: true, pct: 78, status: "Official Coverage (2026)", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "XKX": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
+      "KOS": { covered: true, pct: 78, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
       "ALB": { covered: true, pct: 70, status: "Official Coverage", car: "Yes", vehicle: "Gen 3/4 Hatchback", dots: "Active" },
       "AND": { covered: true, pct: 95, status: "Official Coverage", car: "Yes", vehicle: "Gen 3 Car", dots: "Active" },
       "AUT": { covered: true, pct: 85, status: "Official Coverage", car: "Yes", vehicle: "Gen 4 Hatchback", dots: "Active" },
@@ -410,9 +410,33 @@
     let geojsonLayer;
     let selectedLayer = null;
 
+    // Custom fallback geometries for territories or special ISO keys like Kosovo if missing in base GeoJSON
+    const customGeometries = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "id": "XKX",
+          "properties": { "name": "Kosovo" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[20.6, 41.85], [21.8, 42.2], [21.7, 43.2], [20.8, 43.2], [20.0, 42.7], [20.6, 41.85]]]
+          }
+        }
+      ]
+    };
+
     fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
       .then(res => res.json())
       .then(geoJsonData => {
+        // Merge missing custom regions into feature set if not present
+        const existingIds = new Set(geoJsonData.features.map(f => f.id));
+        customGeometries.features.forEach(feat => {
+          if (!existingIds.has(feat.id)) {
+            geoJsonData.features.push(feat);
+          }
+        });
+
         geojsonLayer = L.geoJSON(geoJsonData, {
           style: function(feature) {
             const iso = feature.id;
