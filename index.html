@@ -172,15 +172,15 @@
 
     <div id="sidebar">
         <div class="header">
-            <h1>Global Coverage Tracker</h1>
+            <h1>Street View Coverage Tracker</h1>
             <div class="stats-summary">
                 <div class="stat-card">
                     <div class="label">Countries Tracked</div>
                     <div class="value" id="stat-total">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="label">Official Coverage</div>
-                    <div class="value" id="stat-covered">0</div>
+                    <div class="label">Avg Coverage</div>
+                    <div class="value" id="stat-avg">0%</div>
                 </div>
             </div>
         </div>
@@ -190,7 +190,7 @@
                 <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
             </div>
             <select id="filter-select" class="filter-select" onchange="filterCountries()">
-                <option value="all">All Countries</option>
+                <option value="all">All Tracked</option>
                 <option value="official">Official Street View</option>
                 <option value="none">No Coverage</option>
             </select>
@@ -204,9 +204,9 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Exhaustive Global Dataset covering all countries & self-governing territories
+        // Exhaustive Full Dataset: 110+ Officially Supported Countries & Territories + All Rest of World
         const countryData = {
-            // NORTH AMERICA & CARIBBEAN
+            // NORTH AMERICA, CENTRAL AMERICA & CARIBBEAN
             "United States of America": { score: 95, updated: "2026", iso: "USA", aliases: ["United States", "USA", "US"] },
             "Canada": { score: 75, updated: "2026", iso: "CAN", aliases: ["Canada"] },
             "Mexico": { score: 75, updated: "2026", iso: "MEX", aliases: ["Mexico"] },
@@ -218,6 +218,14 @@
             "Curaçao": { score: 70, updated: "2024", iso: "CUW", aliases: ["Curacao", "Curaçao"] },
             "Bermuda": { score: 80, updated: "2024", iso: "BMU", aliases: ["Bermuda"] },
             "Greenland": { score: 30, updated: "2024", iso: "GRL", aliases: ["Greenland"] },
+            "United States Virgin Islands": { score: 75, updated: "2024", iso: "VIR", aliases: ["U.S. Virgin Islands", "Virgin Islands, U.S."] },
+            "Cayman Islands": { score: 65, updated: "2024", iso: "CYM", aliases: ["Cayman Islands"] },
+            "Turks and Caicos Islands": { score: 60, updated: "2024", iso: "TCA", aliases: ["Turks and Caicos Islands"] },
+            "Sint Maarten": { score: 70, updated: "2024", iso: "SXM", aliases: ["Sint Maarten"] },
+            "Saint Martin": { score: 70, updated: "2024", iso: "MAF", aliases: ["Saint Martin"] },
+            "Martinique": { score: 75, updated: "2024", iso: "MTQ", aliases: ["Martinique"] },
+            "Guadeloupe": { score: 75, updated: "2024", iso: "GLP", aliases: ["Guadeloupe"] },
+            "Saint Barthélemy": { score: 80, updated: "2024", iso: "BLM", aliases: ["Saint Barthelemy", "Saint Barthélemy"] },
             "Belize": { score: 0, updated: "None", iso: "BLZ", aliases: ["Belize"] },
             "El Salvador": { score: 0, updated: "None", iso: "SLV", aliases: ["El Salvador"] },
             "Honduras": { score: 0, updated: "None", iso: "HND", aliases: ["Honduras"] },
@@ -244,6 +252,7 @@
             "Peru": { score: 50, updated: "2025", iso: "PER", aliases: ["Peru"] },
             "Uruguay": { score: 65, updated: "2025", iso: "URY", aliases: ["Uruguay"] },
             "Bolivia": { score: 35, updated: "2024", iso: "BOL", aliases: ["Bolivia"] },
+            "Falkland Islands": { score: 40, updated: "2024", iso: "FLK", aliases: ["Falkland Islands", "Islas Malvinas"] },
             "Paraguay": { score: 0, updated: "None", iso: "PRY", aliases: ["Paraguay"] },
             "Venezuela": { score: 0, updated: "None", iso: "VEN", aliases: ["Venezuela"] },
             "Guyana": { score: 0, updated: "None", iso: "GUY", aliases: ["Guyana"] },
@@ -291,6 +300,12 @@
             "Switzerland": { score: 90, updated: "2026", iso: "CHE", aliases: ["Switzerland"] },
             "United Kingdom": { score: 95, updated: "2026", iso: "GBR", aliases: ["United Kingdom", "UK", "Great Britain"] },
             "Ukraine": { score: 45, updated: "2024", iso: "UKR", aliases: ["Ukraine"] },
+            "Faroe Islands": { score: 80, updated: "2024", iso: "FRO", aliases: ["Faroe Islands"] },
+            "Gibraltar": { score: 85, updated: "2024", iso: "GIB", aliases: ["Gibraltar"] },
+            "Isle of Man": { score: 80, updated: "2024", iso: "IMN", aliases: ["Isle of Man"] },
+            "Jersey": { score: 85, updated: "2024", iso: "JEY", aliases: ["Jersey"] },
+            "Guernsey": { score: 80, updated: "2024", iso: "GGY", aliases: ["Guernsey"] },
+            "Aland": { score: 70, updated: "2024", iso: "ALA", aliases: ["Åland", "Aland Islands"] },
             "Belarus": { score: 0, updated: "None", iso: "BLR", aliases: ["Belarus"] },
             "Bosnia and Herzegovina": { score: 0, updated: "None", iso: "BIH", aliases: ["Bosnia and Herzegovina", "Bosnia"] },
             "Moldova": { score: 0, updated: "None", iso: "MDA", aliases: ["Moldova", "Republic of Moldova"] },
@@ -321,6 +336,9 @@
             "Kyrgyzstan": { score: 45, updated: "2025", iso: "KGZ", aliases: ["Kyrgyzstan"] },
             "Turkey": { score: 70, updated: "2026", iso: "TUR", aliases: ["Turkey", "Türkiye"] },
             "Bhutan": { score: 40, updated: "2024", iso: "BTN", aliases: ["Bhutan"] },
+            "Hong Kong": { score: 85, updated: "2024", iso: "HKG", aliases: ["Hong Kong"] },
+            "Macao": { score: 80, updated: "2024", iso: "MAC", aliases: ["Macau", "Macao"] },
+            "British Indian Ocean Territory": { score: 40, updated: "2024", iso: "IOT", aliases: ["British Indian Ocean Territory"] },
             "Afghanistan": { score: 0, updated: "None", iso: "AFG", aliases: ["Afghanistan"] },
             "Armenia": { score: 0, updated: "None", iso: "ARM", aliases: ["Armenia"] },
             "Azerbaijan": { score: 0, updated: "None", iso: "AZE", aliases: ["Azerbaijan"] },
@@ -360,6 +378,9 @@
             "Rwanda": { score: 35, updated: "2025", iso: "RWA", aliases: ["Rwanda"] },
             "Tunisia": { score: 40, updated: "2025", iso: "TUN", aliases: ["Tunisia"] },
             "Madagascar": { score: 20, updated: "2024", iso: "MDG", aliases: ["Madagascar"] },
+            "Réunion": { score: 75, updated: "2024", iso: "REU", aliases: ["Reunion", "Réunion"] },
+            "Mayotte": { score: 70, updated: "2024", iso: "MYT", aliases: ["Mayotte"] },
+            "Saint Helena": { score: 50, updated: "2024", iso: "SHN", aliases: ["Saint Helena"] },
             "Algeria": { score: 0, updated: "None", iso: "DZA", aliases: ["Algeria"] },
             "Angola": { score: 0, updated: "None", iso: "AGO", aliases: ["Angola"] },
             "Benin": { score: 0, updated: "None", iso: "BEN", aliases: ["Benin"] },
@@ -409,6 +430,10 @@
             "Guam": { score: 80, updated: "2024", iso: "GUM", aliases: ["Guam"] },
             "Northern Mariana Islands": { score: 75, updated: "2024", iso: "MNP", aliases: ["Northern Mariana Islands"] },
             "American Samoa": { score: 70, updated: "2024", iso: "ASM", aliases: ["American Samoa"] },
+            "New Caledonia": { score: 75, updated: "2024", iso: "NCL", aliases: ["New Caledonia"] },
+            "French Polynesia": { score: 80, updated: "2024", iso: "PYF", aliases: ["French Polynesia"] },
+            "Wallis and Futuna": { score: 60, updated: "2024", iso: "WLF", aliases: ["Wallis and Futuna"] },
+            "Pitcairn Islands": { score: 50, updated: "2024", iso: "PCN", aliases: ["Pitcairn"] },
             "Fiji": { score: 0, updated: "None", iso: "FJI", aliases: ["Fiji"] },
             "Kiribati": { score: 0, updated: "None", iso: "KIR", aliases: ["Kiribati"] },
             "Marshall Islands": { score: 0, updated: "None", iso: "MHL", aliases: ["Marshall Islands"] },
@@ -570,10 +595,12 @@
         function updateStats() {
             const entries = Object.values(countryData);
             const total = entries.length;
-            const covered = entries.filter(e => e.score > 0).length;
+            const coveredEntries = entries.filter(e => e.score > 0);
+            const coveredCount = coveredEntries.length;
+            const avg = coveredCount > 0 ? Math.round(coveredEntries.reduce((acc, curr) => acc + curr.score, 0) / coveredCount) : 0;
 
             document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-covered').innerText = `${covered} (${Math.round((covered/total)*100)}%)`;
+            document.getElementById('stat-avg').innerText = `${avg}%`;
         }
 
         function focusCountryOnMap(countryName) {
