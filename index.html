@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Global Google Street View Coverage Statistics</title>
+  <title>Global Google Street View Coverage Statistics (2026 Edition)</title>
 
   <!-- Leaflet CSS for Map Rendering -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -194,7 +194,6 @@
       color: #fff;
     }
 
-    /* Custom Leaflet Tooltip */
     .leaflet-tooltip-custom {
       background: #1e293b !important;
       border: 1px solid #475569 !important;
@@ -219,7 +218,7 @@
 <body>
 
   <header>
-    <h1>🌐 Street View Global Coverage Tracker</h1>
+    <h1>🌐 Street View Global Coverage Tracker (2026)</h1>
     <div class="controls">
       <select id="tier-filter">
         <option value="ALL">All Tiers</option>
@@ -238,8 +237,8 @@
     <div class="sidebar">
       <div class="stat-card">
         <h3>Global Road Coverage</h3>
-        <div class="value">~17%</div>
-        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Global land mass within 5km of SV panorama</p>
+        <div class="value">~19.5%</div>
+        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Global land area within 5km of official/community panorama (August 2026)</p>
       </div>
 
       <div class="legend">
@@ -300,75 +299,76 @@
       maxZoom: 19
     }).addTo(map);
 
-    // Complete Country Coverage Dataset (ISO 3166-1 Alpha-3 Codes)
+    // Complete Global Dataset (Updated for 2026 Coverage expansions)
     const coverageData = {
       // High Coverage (75% - 100%)
-      "USA": { name: "United States", pct: 92, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
-      "CAN": { name: "Canada", pct: 85, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
-      "GBR": { name: "United Kingdom", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇧" },
-      "FRA": { name: "France", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇫🇷" },
-      "ESP": { name: "Spain", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇸" },
-      "ITA": { name: "Italy", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇹" },
-      "NLD": { name: "Netherlands", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇱" },
-      "BEL": { name: "Belgium", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇪" },
-      "DNK": { name: "Denmark", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇰" },
-      "SWE": { name: "Sweden", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇪" },
-      "NOR": { name: "Norway", pct: 82, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇴" },
-      "FIN": { name: "Finland", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇫🇮" },
-      "JPN": { name: "Japan", pct: 94, tier: "High", cars: "Yes", vehicle: "Low-cam / Gen 4", flag: "🇯🇵" },
-      "KOR": { name: "South Korea", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇷" },
-      "AUS": { name: "Australia", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇺" },
-      "NZL": { name: "New Zealand", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇳🇿" },
-      "CHL": { name: "Chile", pct: 82, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇱" },
-      "PRT": { name: "Portugal", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇹" },
-      "IRL": { name: "Ireland", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇪" },
-      "HUN": { name: "Hungary", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇺" },
-      "CZE": { name: "Czech Republic", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇿" },
-      "SVK": { name: "Slovakia", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇰" },
-      "SVN": { name: "Slovenia", pct: 86, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇮" },
-      "GRC": { name: "Greece", pct: 82, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇷" },
+      "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
+      "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
+      "GBR": { name: "United Kingdom", pct: 97, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇬🇧" },
+      "FRA": { name: "France", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇫🇷" },
+      "ESP": { name: "Spain", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇸" },
+      "ITA": { name: "Italy", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇹" },
+      "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes (Re-mapped 2023-2026)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
+      "NLD": { name: "Netherlands", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇱" },
+      "BEL": { name: "Belgium", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇪" },
+      "DNK": { name: "Denmark", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇰" },
+      "SWE": { name: "Sweden", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇪" },
+      "NOR": { name: "Norway", pct: 86, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇴" },
+      "FIN": { name: "Finland", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇫🇮" },
+      "JPN": { name: "Japan", pct: 96, tier: "High", cars: "Yes", vehicle: "Low-cam / Gen 4", flag: "🇯🇵" },
+      "KOR": { name: "South Korea", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇷" },
+      "AUS": { name: "Australia", pct: 91, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇺" },
+      "NZL": { name: "New Zealand", pct: 90, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇳🇿" },
+      "CHL": { name: "Chile", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇱" },
+      "PRT": { name: "Portugal", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇹" },
+      "IRL": { name: "Ireland", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇪" },
+      "HUN": { name: "Hungary", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇺" },
+      "CZE": { name: "Czech Republic", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇿" },
+      "SVK": { name: "Slovakia", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇰" },
+      "SVN": { name: "Slovenia", pct: 89, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇮" },
+      "GRC": { name: "Greece", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇷" },
 
       // Medium Coverage (40% - 74%)
-      "ALB": { name: "Albania", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇱" },
-      "KOS": { name: "Kosovo", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "XKX": { name: "Kosovo", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "KXK": { name: "Kosovo", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
-      "DEU": { name: "Germany", pct: 65, tier: "Medium", cars: "Yes (Re-mapped)", vehicle: "Gen 4 Car", flag: "🇩🇪" },
-      "AUT": { name: "Austria", pct: 50, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇹" },
-      "POL": { name: "Poland", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
-      "ROU": { name: "Romania", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇴" },
-      "BGR": { name: "Bulgaria", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇬" },
-      "HRV": { name: "Croatia", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇷" },
-      "MEX": { name: "Mexico", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇽" },
-      "BRA": { name: "Brazil", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇷" },
-      "ARG": { name: "Argentina", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇷" },
-      "COL": { name: "Colombia", pct: 58, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇴" },
-      "PER": { name: "Peru", pct: 52, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇪" },
-      "ZAF": { name: "South Africa", pct: 64, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇿🇦" },
-      "TUR": { name: "Turkey", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇷" },
-      "MYS": { name: "Malaysia", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇾" },
-      "THA": { name: "Thailand", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇭" },
+      "ALB": { name: "Albania", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇱" },
+      "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
+      "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
+      "KXK": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Standard Hatchback", flag: "🇽🇰" },
+      "AUT": { name: "Austria", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇹" },
+      "POL": { name: "Poland", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
+      "ROU": { name: "Romania", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇴" },
+      "BGR": { name: "Bulgaria", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇬" },
+      "HRV": { name: "Croatia", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇭🇷" },
+      "MEX": { name: "Mexico", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇽" },
+      "BRA": { name: "Brazil", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇷" },
+      "ARG": { name: "Argentina", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇷" },
+      "COL": { name: "Colombia", pct: 64, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇴" },
+      "PER": { name: "Peru", pct: 58, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇪" },
+      "ZAF": { name: "South Africa", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇿🇦" },
+      "TUR": { name: "Turkey", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇹🇷" },
+      "MYS": { name: "Malaysia", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇾" },
+      "THA": { name: "Thailand", pct: 74, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇭" },
+      "IDN": { name: "Indonesia", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Car & Scooter", flag: "🇮🇩" },
+      "IND": { name: "India", pct: 52, tier: "Medium", cars: "Yes (Partner Drives)", vehicle: "Car & Trike", flag: "🇮🇳" },
 
       // Partial Coverage (15% - 39%)
-      "IND": { name: "India", pct: 35, tier: "Partial", cars: "Yes (Partners)", vehicle: "Car & Trike", flag: "🇮🇳" },
-      "IDN": { name: "Indonesia", pct: 38, tier: "Partial", cars: "Yes", vehicle: "Car & Scooter", flag: "🇮🇩" },
       "RUS": { name: "Russia", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇺" },
-      "PHL": { name: "Philippines", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇭" },
-      "NGA": { name: "Nigeria", pct: 20, tier: "Partial", cars: "Yes", vehicle: "Car & Trekker", flag: "🇳🇬" },
-      "KEN": { name: "Kenya", pct: 25, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇪" },
-      "SEN": { name: "Senegal", pct: 18, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇳" },
-      "LKA": { name: "Sri Lanka", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Car & Tuk-Tuk", flag: "🇱🇰" },
-      "JOR": { name: "Jordan", pct: 22, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
+      "PHL": { name: "Philippines", pct: 39, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇭" },
+      "NGA": { name: "Nigeria", pct: 32, tier: "Partial", cars: "Yes", vehicle: "Car & Trekker", flag: "🇳🇬" },
+      "KEN": { name: "Kenya", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇪" },
+      "SEN": { name: "Senegal", pct: 24, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇳" },
+      "LKA": { name: "Sri Lanka", pct: 38, tier: "Partial", cars: "Yes", vehicle: "Car & Tuk-Tuk", flag: "🇱🇰" },
+      "JOR": { name: "Jordan", pct: 28, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
+      "RWA": { name: "Rwanda", pct: 20, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇼" },
 
       // Spot / Landmark Coverage (< 15%)
-      "EGY": { name: "Egypt", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇪🇬" },
-      "CHN": { name: "China", pct: 2, tier: "Landmarks Only", cars: "No", vehicle: "Indoor Trekker", flag: "🇨🇳" },
-      "NPL": { name: "Nepal", pct: 4, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇳🇵" },
-      "IRQ": { name: "Iraq", pct: 3, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇮🇶" },
-      "PAK": { name: "Pakistan", pct: 3, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇰" },
-      "TZA": { name: "Tanzania", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker / Boat", flag: "🇹🇿" },
-      "GRL": { name: "Greenland", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile / ATV", flag: "🇬🇱" },
-      "MDG": { name: "Madagascar", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇲🇬" }
+      "EGY": { name: "Egypt", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇪🇬" },
+      "CHN": { name: "China", pct: 3, tier: "Landmarks Only", cars: "No", vehicle: "Indoor Trekker", flag: "🇨🇳" },
+      "NPL": { name: "Nepal", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker Backpack", flag: "🇳🇵" },
+      "IRQ": { name: "Iraq", pct: 4, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇮🇶" },
+      "PAK": { name: "Pakistan", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇰" },
+      "TZA": { name: "Tanzania", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker / Boat", flag: "🇹🇿" },
+      "GRL": { name: "Greenland", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile / ATV", flag: "🇬🇱" },
+      "MDG": { name: "Madagascar", pct: 6, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇲🇬" }
     };
 
     let selectedTierFilter = "ALL";
@@ -378,7 +378,7 @@
       if (!data) return '#334155'; // No coverage / unmapped
       
       if (selectedTierFilter !== "ALL" && data.tier !== selectedTierFilter) {
-        return '#1e293b'; // Dimmed out when filter applied
+        return '#1e293b'; // Dimmed when filter applied
       }
 
       if (data.pct >= 75) return '#0284c7';
