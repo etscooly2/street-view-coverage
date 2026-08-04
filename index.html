@@ -382,21 +382,27 @@
       }
     });
 
-    // Expanded Global Street View Coverage Database
+    // Complete Global Street View Coverage Database (ISO Alpha-3 and Common Name Mappings)
     const coverageData = {
-      // North America
+      // NORTH AMERICA
       "USA": { name: "United States", pct: 95, tier: "High", cars: "Yes", vehicle: "Gen 4 Car & Trekker", flag: "🇺🇸" },
       "CAN": { name: "Canada", pct: 88, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇨🇦" },
       "MEX": { name: "Mexico", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇲🇽" },
-      "GRL": { name: "Greenland", pct: 12, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / ATV", flag: "🇬🇱" },
+      "GRL": { name: "Greenland", pct: 12, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / ATV / Boat", flag: "🇬🇱" },
+      "SPM": { name: "Saint Pierre and Miquelon", pct: 40, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇲" },
+      "BMU": { name: "Bermuda", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇲" },
 
-      // Central America & Caribbean
+      // CENTRAL AMERICA & CARIBBEAN
       "GTM": { name: "Guatemala", pct: 45, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇹" },
       "DOM": { name: "Dominican Republic", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇴" },
       "PAN": { name: "Panama", pct: 10, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Boat", flag: "🇵🇦" },
-      "CRI": { name: "Costa Rica", pct: 15, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Trekker Bike", flag: "🇨🇷" },
+      "CRI": { name: "Costa Rica", pct: 15, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Bike", flag: "🇨🇷" },
+      "PRI": { name: "Puerto Rico", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇷" },
+      "VIR": { name: "U.S. Virgin Islands", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇻🇮" },
+      "ATG": { name: "Antigua and Barbuda", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇦🇬" },
+      "BHS": { name: "Bahamas", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇧🇸" },
 
-      // South America
+      // SOUTH AMERICA
       "BRA": { name: "Brazil", pct: 82, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇧🇷" },
       "ARG": { name: "Argentina", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇷" },
       "CHL": { name: "Chile", pct: 84, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇱" },
@@ -405,8 +411,9 @@
       "ECU": { name: "Ecuador", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇨" },
       "URY": { name: "Uruguay", pct: 78, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇺🇾" },
       "BOL": { name: "Bolivia", pct: 45, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇴" },
+      "FLK": { name: "Falkland Islands", pct: 15, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / 4x4", flag: "🇫🇰" },
 
-      // Western & Northern Europe
+      // WESTERN & NORTHERN EUROPE
       "GBR": { name: "United Kingdom", pct: 97, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇬🇧" },
       "IRL": { name: "Ireland", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇪" },
       "FRA": { name: "France", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇫🇷" },
@@ -416,6 +423,7 @@
       "DEU": { name: "Germany", pct: 82, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇩🇪" },
       "NLD": { name: "Netherlands", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard / Trike", flag: "🇳🇱" },
       "BEL": { name: "Belgium", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇪" },
+      "LUX": { name: "Luxembourg", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇺" },
       "DNK": { name: "Denmark", pct: 96, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇩🇰" },
       "SWE": { name: "Sweden", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇪" },
       "NOR": { name: "Norway", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car / Snowmobile", flag: "🇳🇴" },
@@ -423,8 +431,15 @@
       "ISL": { name: "Iceland", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard / 4x4", flag: "🇮🇸" },
       "CHE": { name: "Switzerland", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car / Trike", flag: "🇨🇭" },
       "AUT": { name: "Austria", pct: 78, tier: "High", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇦🇹" },
+      "MCO": { name: "Monaco", pct: 99, tier: "High", cars: "Yes", vehicle: "Standard Car / Trekker", flag: "🇲🇨" },
+      "AND": { name: "Andorra", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇩" },
+      "SMR": { name: "San Marino", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇲" },
+      "GIB": { name: "Gibraltar", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇮" },
+      "FRO": { name: "Faroe Islands", pct: 85, tier: "High", cars: "Yes", vehicle: "Sheep Cam / Standard Car", flag: "🇫🇴" },
+      "ALA": { name: "Åland Islands", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇽" },
+      "IMN": { name: "Isle of Man", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇲" },
 
-      // Central & Eastern Europe + Balkans
+      // CENTRAL & EASTERN EUROPE + BALKANS
       "POL": { name: "Poland", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇵🇱" },
       "CZE": { name: "Czechia", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇨🇿" },
       "SVK": { name: "Slovakia", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇰" },
@@ -437,29 +452,37 @@
       "MKD": { name: "North Macedonia", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇰" },
       "SRB": { name: "Serbia", pct: 72, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇸" },
       "MNE": { name: "Montenegro", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇪" },
+      "BIH": { name: "Bosnia and Herzegovina", pct: 15, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Smallcam", flag: "🇧🇦" },
       "GRC": { name: "Greece", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇷" },
       "TUR": { name: "Turkey", pct: 68, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car", flag: "🇹🇷" },
       "UKR": { name: "Ukraine", pct: 55, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇺🇦" },
       "RUS": { name: "Russia", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Standard / Gen 4", flag: "🇷🇺" },
+      "BLR": { name: "Belarus", pct: 10, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker", flag: "🇧🇾" },
+      "MDA": { name: "Moldova", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇲🇩" },
       "EST": { name: "Estonia", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇪🇪" },
       "LVA": { name: "Latvia", pct: 90, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇻" },
       "LTU": { name: "Lithuania", pct: 91, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇹" },
 
-      // Kosovo Mappings
+      // KOSOVO ALIASES
       "KOS": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
       "XKX": { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
       "XK":  { name: "Kosovo", pct: 62, tier: "Medium", cars: "Yes", vehicle: "Smallcam / Standard Hatchback", flag: "🇽🇰" },
 
-      // Middle East & North Africa
+      // MIDDLE EAST & NORTH AFRICA
       "ISR": { name: "Israel", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇮🇱" },
+      "PSE": { name: "Palestine", pct: 25, tier: "Partial", cars: "Partial", vehicle: "Trekker / Car", flag: "🇵🇸" },
       "JOR": { name: "Jordan", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇯🇴" },
       "ARE": { name: "United Arab Emirates", pct: 60, tier: "Medium", cars: "Yes", vehicle: "Standard / Trekker", flag: "🇦🇪" },
       "QAT": { name: "Qatar", pct: 40, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇶🇦" },
       "OMN": { name: "Oman", pct: 25, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇴🇲" },
+      "KWT": { name: "Kuwait", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇰🇼" },
+      "BHR": { name: "Bahrain", pct: 15, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇧🇭" },
       "TUN": { name: "Tunisia", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇹🇳" },
       "EGY": { name: "Egypt", pct: 8, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Camel", flag: "🇪🇬" },
+      "LBN": { name: "Lebanon", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇱🇧" },
+      "IRQ": { name: "Iraq", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇮🇶" },
 
-      // Sub-Saharan Africa
+      // SUB-SAHARAN AFRICA
       "ZAF": { name: "South Africa", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇿🇦" },
       "NGA": { name: "Nigeria", pct: 42, tier: "Medium", cars: "Yes", vehicle: "Standard Car / Trekker", flag: "🇳🇬" },
       "KEN": { name: "Kenya", pct: 38, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇪" },
@@ -470,12 +493,17 @@
       "LSO": { name: "Lesotho", pct: 40, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇱🇸" },
       "SWZ": { name: "Eswatini", pct: 45, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇿" },
       "BWA": { name: "Botswana", pct: 35, tier: "Partial", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇼" },
+      "NAM": { name: "Namibia", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇳🇦" },
       "MDG": { name: "Madagascar", pct: 5, tier: "Landmarks Only", cars: "Partial", vehicle: "Trekker / Boat", flag: "🇲🇬" },
+      "REU": { name: "Réunion", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇷🇪" },
+      "MYT": { name: "Mayotte", pct: 70, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇾🇹" },
 
-      // Asia-Pacific & Oceania
+      // ASIA & PACIFIC
       "JPN": { name: "Japan", pct: 96, tier: "High", cars: "Yes", vehicle: "Low-mount Gen 4 / Trekker", flag: "🇯🇵" },
       "KOR": { name: "South Korea", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇰🇷" },
       "TWN": { name: "Taiwan", pct: 95, tier: "High", cars: "Yes", vehicle: "Standard Car / Scooter", flag: "🇹🇼" },
+      "HKG": { name: "Hong Kong", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car / Trekker", flag: "🇭🇰" },
+      "MAC": { name: "Macao", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇴" },
       "THA": { name: "Thailand", pct: 88, tier: "High", cars: "Yes", vehicle: "Standard Car / Trekker", flag: "🇹🇭" },
       "MYS": { name: "Malaysia", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇾" },
       "SGP": { name: "Singapore", pct: 98, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇸🇬" },
@@ -488,8 +516,20 @@
       "IND": { name: "India", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Gen 4 Car & Mahindra", flag: "🇮🇳" },
       "BGD": { name: "Bangladesh", pct: 40, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇩" },
       "MNG": { name: "Mongolia", pct: 30, tier: "Partial", cars: "Yes", vehicle: "Standard Pickup / Trekker", flag: "🇲🇳" },
+      "BTN": { name: "Bhutan", pct: 65, tier: "Medium", cars: "Yes", vehicle: "Standard Car", flag: "🇧🇹" },
+      "NPL": { name: "Nepal", pct: 8, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇳🇵" },
+      "PAK": { name: "Pakistan", pct: 5, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇰" },
+      "CHN": { name: "China", pct: 2, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇨🇳" },
+
+      // OCEANIA & ANTARCTICA
       "AUS": { name: "Australia", pct: 92, tier: "High", cars: "Yes", vehicle: "Standard / Gen 4 4x4", flag: "🇦🇺" },
-      "NZL": { name: "New Zealand", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇿" }
+      "NZL": { name: "New Zealand", pct: 94, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇳🇿" },
+      "GUM": { name: "Guam", pct: 85, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇬🇺" },
+      "MNP": { name: "Northern Mariana Islands", pct: 80, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇲🇵" },
+      "ASM": { name: "American Samoa", pct: 75, tier: "High", cars: "Yes", vehicle: "Standard Car", flag: "🇦🇸" },
+      "WLF": { name: "Wallis and Futuna", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇼🇫" },
+      "PNC": { name: "Pitcairn Islands", pct: 10, tier: "Landmarks Only", cars: "No", vehicle: "Trekker", flag: "🇵🇳" },
+      "ATA": { name: "Antarctica", pct: 1, tier: "Landmarks Only", cars: "No", vehicle: "Snowmobile / Trekker", flag: "🇦🇶" }
     };
 
     let selectedTierFilter = "ALL";
@@ -499,8 +539,18 @@
       const name = feature.properties ? feature.properties.name : "";
       
       if (coverageData[id]) return coverageData[id];
-      if (name && (name === "Kosovo" || name.includes("Kosovo"))) return coverageData["KOS"];
-      if (name && (name.includes("Macedonia"))) return coverageData["MKD"];
+      
+      // Fallback matching by name string for unmapped regional ISO variants
+      if (name) {
+        if (name === "Kosovo" || name.includes("Kosovo")) return coverageData["KOS"];
+        if (name.includes("Macedonia")) return coverageData["MKD"];
+        if (name.includes("Bosnia")) return coverageData["BIH"];
+        if (name.includes("Tanzania") || name.includes("Kenya") || name.includes("Uganda")) {
+          for (const key in coverageData) {
+            if (coverageData[key].name.toLowerCase() === name.toLowerCase()) return coverageData[key];
+          }
+        }
+      }
 
       return { name: name || id, pct: 0, tier: "No Official Coverage", cars: "No", vehicle: "N/A", flag: "🏳️" };
     }
