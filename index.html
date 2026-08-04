@@ -1,522 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Country & Percentage Tracker</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
-    :root {
-      --bg-dark: #0f172a;
-      --panel-bg: #1e293b;
-      --card-bg: #334155;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #475569;
-      --accent: #10b981;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street View Coverage Tracker</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
 
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+        /* Sidebar Styles */
+        #sidebar {
+            width: 380px;
+            background-color: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #2d2d2d;
+            z-index: 1000;
+        }
 
-    header {
-      background-color: var(--panel-bg);
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+        .header {
+            padding: 20px;
+            background-color: #252525;
+            border-bottom: 1px solid #2d2d2d;
+        }
 
-    h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4dabf7;
+            margin-bottom: 15px;
+        }
 
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      background-color: var(--bg-dark);
-      padding: 0.25rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-    }
+        .stats-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
-    .tab-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.5rem 1rem;
-      font-weight: 600;
-      font-size: 0.875rem;
-      border-radius: 0.375rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+        .stat-card {
+            background: #1e1e1e;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
 
-    .tab-btn:hover {
-      color: var(--text-main);
-    }
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+        }
 
-    .tab-btn.active {
-      background-color: var(--primary);
-      color: #ffffff;
-    }
+        .stat-card .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 4px;
+            color: #fff;
+        }
 
-    .main-container {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
+        /* Country List */
+        .search-box {
+            padding: 12px 20px;
+            background: #1e1e1e;
+            border-bottom: 1px solid #2d2d2d;
+        }
 
-    .tab-content {
-      display: none;
-      width: 100%;
-      height: 100%;
-    }
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #2b2b2b;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            color: #fff;
+            outline: none;
+        }
 
-    .tab-content.active {
-      display: block;
-    }
+        .search-box input:focus {
+            border-color: #4dabf7;
+        }
 
-    #map {
-      width: 100%;
-      height: 100%;
-      background-color: #0b1120;
-    }
+        #country-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
 
-    .list-container {
-      height: 100%;
-      overflow-y: auto;
-      padding: 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        .country-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            background: #252525;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 
-    .search-bar {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background-color: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      color: var(--text-main);
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-    }
+        .country-item:hover {
+            background: #2c2c2c;
+        }
 
-    .search-bar:focus {
-      outline: 2px solid var(--primary);
-    }
+        .country-info {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .country-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
-      padding-bottom: 2rem;
-    }
+        .country-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
 
-    .country-card {
-      background-color: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
+        .country-subtext {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
+        }
 
-    .country-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .score-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
 
-    .country-name {
-      font-weight: 600;
-      font-size: 1rem;
-    }
+        /* Map Container */
+        #map {
+            flex: 1;
+            height: 100%;
+            background: #0e0e0e;
+        }
 
-    .country-percentage {
-      font-weight: 700;
-      color: var(--accent);
-      font-size: 1.125rem;
-    }
+        /* Custom Leaflet Tooltip */
+        .leaflet-tooltip-custom {
+            background: rgba(30, 30, 30, 0.95) !important;
+            border: 1px solid #444 !important;
+            color: #fff !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            font-size: 0.85rem !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+        }
 
-    .progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      background-color: var(--card-bg);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background-color: var(--accent);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .stats-container {
-      height: 100%;
-      overflow-y: auto;
-      padding: 2rem 1.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .summary-card {
-      background-color: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .summary-title {
-      font-size: 1rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .summary-value {
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: var(--accent);
-      line-height: 1;
-      margin-bottom: 1rem;
-    }
-
-    .summary-subtext {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-    }
-
-    .stat-box {
-      background-color: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      padding: 1.25rem;
-    }
-
-    .stat-box-title {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-box-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .info-legend {
-      background-color: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-      font-size: 0.85rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.25rem;
-    }
-
-    .legend-color {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-    }
-  </style>
+        .leaflet-tooltip-custom strong {
+            color: #4dabf7;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>World Percentage Dashboard</h1>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('map-view', event)">Map View</button>
-      <button class="tab-btn" onclick="switchTab('list-view', event)">Countries List</button>
-      <button class="tab-btn" onclick="switchTab('percent-view', event)">% World Summary</button>
-    </div>
-  </header>
-
-  <div class="main-container">
-    <div id="map-view" class="tab-content active">
-      <div id="map"></div>
-      <div class="info-legend">
-        <strong>Percentage Scale</strong>
-        <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> 80% - 100%</div>
-        <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div> 50% - 79%</div>
-        <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div> 20% - 49%</div>
-        <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div> 1% - 19%</div>
-        <div class="legend-item"><div class="legend-color" style="background: #334155;"></div> 0%</div>
-      </div>
-    </div>
-
-    <div id="list-view" class="tab-content">
-      <div class="list-container">
-        <input type="text" id="countrySearch" class="search-bar" placeholder="Search country name..." oninput="filterCountries()">
-        <div class="country-grid" id="countryGrid"></div>
-      </div>
-    </div>
-
-    <div id="percent-view" class="tab-content">
-      <div class="stats-container">
-        <div class="summary-card">
-          <div class="summary-title">Total World Score / Percentage</div>
-          <div class="summary-value" id="totalWorldPercent">0.00%</div>
-          <div class="summary-subtext">Calculated as the average percentage score across all recognized world countries.</div>
+    <div id="sidebar">
+        <div classheader class="header">
+            <h1>Coverage Tracker</h1>
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="label">Total Tracked</div>
+                    <div class="value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Avg Score</div>
+                    <div class="value" id="stat-avg">0%</div>
+                </div>
+            </div>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-box-title">Total Countries</div>
-            <div class="stat-box-value" id="totalCount">195</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-title">At 100% Score</div>
-            <div class="stat-box-value" id="hundredCount" style="color: #10b981;">0</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-title">Above 50% Score</div>
-            <div class="stat-box-value" id="aboveFiftyCount" style="color: #3b82f6;">0</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-title">At 0% Score</div>
-            <div class="stat-box-value" id="zeroCount" style="color: #ef4444;">0</div>
-          </div>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
         </div>
-      </div>
+
+        <div id="country-list"></div>
     </div>
-  </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const countryData = [
-      { name: "United States of America", iso: "USA", percentage: 100 },
-      { name: "Canada", iso: "CAN", percentage: 90 },
-      { name: "United Kingdom", iso: "GBR", percentage: 85 },
-      { name: "Germany", iso: "DEU", percentage: 80 },
-      { name: "France", iso: "FRA", percentage: 75 },
-      { name: "Japan", iso: "JPN", percentage: 95 },
-      { name: "Australia", iso: "AUS", percentage: 85 },
-      { name: "Brazil", iso: "BRA", percentage: 60 },
-      { name: "India", iso: "IND", percentage: 70 },
-      { name: "China", iso: "CHN", percentage: 65 },
-      { name: "Italy", iso: "ITA", percentage: 70 },
-      { name: "Spain", iso: "ESP", percentage: 75 },
-      { name: "Mexico", iso: "MEX", percentage: 50 },
-      { name: "South Korea", iso: "KOR", percentage: 90 },
-      { name: "Netherlands", iso: "NLD", percentage: 80 },
-      { name: "Argentina", iso: "ARG", percentage: 45 },
-      { name: "South Africa", iso: "ZAF", percentage: 40 },
-      { name: "Saudi Arabia", iso: "SAU", percentage: 55 },
-      { name: "Egypt", iso: "EGY", percentage: 35 },
-      { name: "Nigeria", iso: "NGA", percentage: 30 },
-      { name: "Sweden", iso: "SWE", percentage: 85 },
-      { name: "Norway", iso: "NOR", percentage: 90 },
-      { name: "Switzerland", iso: "CHE", percentage: 95 },
-      { name: "Turkey", iso: "TUR", percentage: 50 },
-      { name: "Indonesia", iso: "IDN", percentage: 40 },
-      { name: "Poland", iso: "POL", percentage: 65 },
-      { name: "Belgium", iso: "BEL", percentage: 75 },
-      { name: "Austria", iso: "AUT", percentage: 80 },
-      { name: "United Arab Emirates", iso: "ARE", percentage: 85 },
-      { name: "New Zealand", iso: "NZL", percentage: 90 },
-      { name: "Singapore", iso: "SGP", percentage: 95 },
-      { name: "Albania", iso: "ALB", percentage: 50 },
-      { name: "Greece", iso: "GRC", percentage: 60 },
-      { name: "Portugal", iso: "PRT", percentage: 70 },
-      { name: "Ireland", iso: "IRL", percentage: 80 },
-      { name: "Denmark", iso: "DNK", percentage: 85 },
-      { name: "Finland", iso: "FIN", percentage: 85 },
-      { name: "Ukraine", iso: "UKR", percentage: 30 },
-      { name: "Vietnam", iso: "VNM", percentage: 50 },
-      { name: "Thailand", iso: "THA", percentage: 55 },
-      { name: "Malaysia", iso: "MYS", percentage: 60 },
-      { name: "Chile", iso: "CHL", percentage: 65 },
-      { name: "Colombia", iso: "COL", percentage: 45 },
-      { name: "Peru", iso: "PER", percentage: 40 },
-      { name: "Pakistan", iso: "PAK", percentage: 25 },
-      { name: "Bangladesh", iso: "BGD", percentage: 30 },
-      { name: "Philippines", iso: "PHL", percentage: 45 },
-      { name: "Morocco", iso: "MAR", percentage: 40 },
-      { name: "Kenya", iso: "KEN", percentage: 35 }
-    ];
+    <div id="map"></div>
 
-    let map;
-    let geojsonLayer;
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Sample Coverage Data (ISO 2-letter codes or Country Names)
+        const countryData = {
+            "United States of America": { score: 85, updated: "2026" },
+            "Canada": { score: 70, updated: "2025" },
+            "United Kingdom": { score: 92, updated: "2026" },
+            "France": { score: 75, updated: "2026" },
+            "Germany": { score: 65, updated: "2025" },
+            "Japan": { score: 90, updated: "2026" },
+            "Australia": { score: 80, updated: "2025" },
+            "Brazil": { score: 55, updated: "2024" },
+            "South Africa": { score: 45, updated: "2024" },
+            "Italy": { score: 78, updated: "2025" },
+            "Spain": { score: 82, updated: "2026" }
+        };
 
-    function getColor(d) {
-      return d >= 80 ? '#10b981' :
-             d >= 50 ? '#3b82f6' :
-             d >= 20 ? '#f59e0b' :
-             d > 0   ? '#ef4444' :
-                       '#334155';
-    }
-
-    function initMap() {
-      map = L.map('map', {
-        center: [20, 0],
-        zoom: 2,
-        minZoom: 2,
-        maxBounds: [[-90, -180], [90, 180]]
-      });
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19
-      }).addTo(map);
-
-      fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-        .then(response => response.json())
-        .then(data => {
-          geojsonLayer = L.geoJSON(data, {
-            style: style,
-            onEachFeature: onEachFeature
-          }).addTo(map);
-        })
-        .catch(err => console.error("Could not load GeoJSON map data:", err));
-    }
-
-    function getCountryPercentage(iso, name) {
-      const match = countryData.find(c => c.iso === iso || c.name.toLowerCase() === name.toLowerCase());
-      return match ? match.percentage : 0;
-    }
-
-    function style(feature) {
-      const pct = getCountryPercentage(feature.id, feature.properties.name);
-      return {
-        fillColor: getColor(pct),
-        weight: 1,
-        opacity: 1,
-        color: '#475569',
-        fillOpacity: 0.7
-      };
-    }
-
-    function onEachFeature(feature, layer) {
-      const pct = getCountryPercentage(feature.id, feature.properties.name);
-      layer.bindTooltip(`<strong>${feature.properties.name}</strong><br/>${pct}%`, {
-        sticky: true
-      });
-      layer.on({
-        mouseover: (e) => {
-          const l = e.target;
-          l.setStyle({ weight: 2, color: '#f8fafc', fillOpacity: 0.9 });
-        },
-        mouseout: (e) => {
-          geojsonLayer.resetStyle(e.target);
+        // Color Scale Function
+        function getColor(score) {
+            if (score === undefined) return '#333333';
+            return score > 80 ? '#2ecc71' :
+                   score > 60 ? '#f1c40f' :
+                   score > 40 ? '#e67e22' :
+                   score > 0  ? '#e74c3c' : '#333333';
         }
-      });
-    }
 
-    function renderCountryList() {
-      const grid = document.getElementById('countryGrid');
-      grid.innerHTML = '';
+        // Initialize Map
+        const map = L.map('map', {
+            center: [20, 0],
+            zoom: 2,
+            minZoom: 2,
+            maxBounds: [[-90, -180], [90, 180]]
+        });
 
-      const sorted = [...countryData].sort((a, b) => b.percentage - a.percentage);
+        // Dark Tiles Base Layer
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
 
-      sorted.forEach(c => {
-        const card = document.createElement('div');
-        card.className = 'country-card';
-        card.dataset.name = c.name.toLowerCase();
-        card.innerHTML = `
-          <div class="country-header">
-            <span class="country-name">${c.name}</span>
-            <span class="country-percentage">${c.percentage}%</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: ${c.percentage}%; background-color: ${getColor(c.percentage)}"></div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
+        let geojsonLayer;
 
-    function filterCountries() {
-      const query = document.getElementById('countrySearch').value.toLowerCase();
-      const cards = document.querySelectorAll('.country-card');
-      cards.forEach(card => {
-        if (card.dataset.name.includes(query)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
+        // Style Function for GeoJSON features
+        function styleFeature(feature) {
+            const name = feature.properties.name;
+            const data = countryData[name];
+            const score = data ? data.score : undefined;
+
+            return {
+                fillColor: getColor(score),
+                weight: 1,
+                opacity: 1,
+                color: '#1e1e1e',
+                fillOpacity: score ? 0.7 : 0.2
+            };
         }
-      });
-    }
 
-    function calculateStats() {
-      const totalSum = countryData.reduce((acc, curr) => acc + curr.percentage, 0);
-      const avg = (totalSum / countryData.length).toFixed(2);
-      
-      document.getElementById('totalWorldPercent').innerText = `${avg}%`;
-      document.getElementById('totalCount').innerText = countryData.length;
-      document.getElementById('hundredCount').innerText = countryData.filter(c => c.percentage === 100).length;
-      document.getElementById('aboveFiftyCount').innerText = countryData.filter(c => c.percentage >= 50).length;
-      document.getElementById('zeroCount').innerText = countryData.filter(c => c.percentage === 0).length;
-    }
+        // Update Map Layers & Re-render
+        function updateMap() {
+            if (geojsonLayer) {
+                geojsonLayer.setStyle(styleFeature);
+            }
+            renderCountryList();
+            updateStats();
+        }
 
-    function switchTab(tabId, evt) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        // Mouse Event Handlers
+        function highlightFeature(e) {
+            const layer = e.target;
+            layer.setStyle({
+                weight: 2,
+                color: '#ffffff',
+                fillOpacity: 0.9
+            });
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                layer.bringToFront();
+            }
+        }
 
-      if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active');
-      }
+        function resetHighlight(e) {
+            geojsonLayer.resetStyle(e.target);
+        }
 
-      const activeContent = document.getElementById(tabId);
-      if (activeContent) {
-        activeContent.classList.add('active');
-      }
+        function onEachFeature(feature, layer) {
+            const name = feature.properties.name;
+            const data = countryData[name];
+            const scoreText = data ? `${data.score}%` : 'No Data';
 
-      if (tabId === 'map-view' && map) {
-        setTimeout(() => { map.invalidateSize(); }, 100);
-      }
-    }
+            // Tooltip displaying Country Name & Score
+            layer.bindTooltip(
+                `<strong>${name}</strong><br/>Score: ${scoreText}`,
+                { className: 'leaflet-tooltip-custom', sticky: true }
+            );
 
-    window.onload = () => {
-      initMap();
-      renderCountryList();
-      calculateStats();
-    };
-  </script>
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+                click: function () {
+                    map.fitBounds(layer.getBounds());
+                }
+            });
+        }
+
+        // Load GeoJSON World Boundaries
+        fetch('https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer = L.geoJson(data, {
+                    style: styleFeature,
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+            })
+            .catch(err => console.error("Error loading GeoJSON data:", err));
+
+        // Render Sidebar Country List
+        function renderCountryList(filterText = '') {
+            const listContainer = document.getElementById('country-list');
+            listContainer.innerHTML = '';
+
+            const entries = Object.entries(countryData)
+                .filter(([name]) => name.toLowerCase().includes(filterText.toLowerCase()))
+                .sort((a, b) => b[1].score - a[1].score);
+
+            entries.forEach(([name, data]) => {
+                const item = document.createElement('div');
+                item.className = 'country-item';
+                item.onclick = () => focusCountryOnMap(name);
+
+                item.innerHTML = `
+                    <div class="country-info">
+                        <span class="country-name">${name}</span>
+                        <span class="country-subtext">Updated: ${data.updated}</span>
+                    </div>
+                    <span class="score-badge" style="background-color: ${getColor(data.score)}">
+                        ${data.score}%
+                    </span>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function filterCountries() {
+            const query = document.getElementById('search-input').value;
+            renderCountryList(query);
+        }
+
+        function updateStats() {
+            const entries = Object.values(countryData);
+            const total = entries.length;
+            const avg = total > 0 ? Math.round(entries.reduce((acc, curr) => acc + curr.score, 0) / total) : 0;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-avg').innerText = `${avg}%`;
+        }
+
+        function focusCountryOnMap(countryName) {
+            if (!geojsonLayer) return;
+            geojsonLayer.eachLayer(layer => {
+                if (layer.feature.properties.name === countryName) {
+                    map.fitBounds(layer.getBounds());
+                    layer.fire('mouseover');
+                }
+            });
+        }
+
+        // Initial setup
+        renderCountryList();
+        updateStats();
+    </script>
 </body>
 </html>
