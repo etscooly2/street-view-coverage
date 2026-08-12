@@ -230,7 +230,6 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Verified complete global master list of sovereign countries with official Google Street View coverage
         const countryData = {
             // Americas
             "United States": { score: 95, updated: "2026", status: "Full", region: "Americas", iso: "USA", aliases: ["United States of America", "USA", "US"] },
@@ -344,14 +343,12 @@
 
         let currentRegionFilter = 'All';
 
-        // Color Scale Function
         function getColor(score) {
             return score >= 80 ? '#2ecc71' :
                    score >= 60 ? '#3498db' :
                    score >= 40 ? '#f1c40f' : '#e74c3c';
         }
 
-        // Initialize Map
         const map = L.map('map', {
             center: [20, 0],
             zoom: 2,
@@ -359,7 +356,6 @@
             maxBounds: [[-90, -180], [90, 180]]
         });
 
-        // Dark Canvas Layer
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
             subdomains: 'abcd',
@@ -445,7 +441,6 @@
             });
         }
 
-        // Fetch World Borders
         fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
             .then(response => response.json())
             .then(data => {
@@ -496,7 +491,6 @@
         function filterByRegion(region) {
             currentRegionFilter = region;
             
-            // Update button styles
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.innerText === region || (region === 'All' && btn.innerText === 'All')) {
                     btn.classList.add('active');
