@@ -58,9 +58,9 @@
 
     "South Africa": { "score": 65, "updated": "2026", "status": "Full", "region": "Southern Africa", "iso": "ZAF", "aliases": ["South Africa"] },
     "Lesotho": { "score": 45, "updated": "2024", "status": "Limited", "region": "Southern Africa", "iso": "LSO", "aliases": ["Lesotho"] },
-    "Eswatini": { "score": 45, "updated": "2024", "status": "Limited", "region": "Southern Africa", "iso": "SWZ", aliases: ["Eswatini", "Swaziland"] },
+    "Eswatini": { "score": 45, "updated": "2024", "status": "Limited", "region": "Southern Africa", "iso": "SWZ", "aliases": ["Eswatini", "Swaziland"] },
     "Botswana": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southern Africa", "iso": "BWA", "aliases": ["Botswana"] },
-    "Namibia": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southern Africa", "iso": "NAM", aliases: ["Namibia"] },
+    "Namibia": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southern Africa", "iso": "NAM", "aliases": ["Namibia"] },
 
     "Austria": { "score": 75, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "AUT", "aliases": ["Austria"] },
     "Belgium": { "score": 90, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "BEL", "aliases": ["Belgium"] },
@@ -141,18 +141,18 @@
     "Falkland Islands": { "score": 40, "updated": "2024", "status": "Limited", "region": "South America", "iso": "FLK", "aliases": ["Falkland Islands"] },
     "South Georgia and the South Sandwich Islands": { "score": 30, "updated": "2024", "status": "Limited", "region": "South America", "iso": "SGS", "aliases": ["South Georgia and the South Sandwich Islands"] },
 
-    "Australia": { "score": 90, "updated": "2026", "status": "Full", "region": "Australia and New Zealand", "iso": "AUS", "aliases": ["Australia"] },
-    "Christmas Island": { "score": 60, "updated": "2024", "status": "Partial", "region": "Australia and New Zealand", "iso": "CXR", "aliases": ["Christmas Island"] },
-    "Cocos (Keeling) Islands": { "score": 60, "updated": "2024", "status": "Partial", "region": "Australia and New Zealand", "iso": "CCK", "aliases": ["Cocos Islands", "Cocos (Keeling) Islands"] },
-    "New Zealand": { "score": 88, "updated": "2026", "status": "Full", "region": "Australia and New Zealand", "iso": "NZL", "aliases": ["New Zealand"] },
+    "Australia": { "score": 90, "updated": "2026", "status": "Full", "region": "Oceania", "iso": "AUS", "aliases": ["Australia"] },
+    "Christmas Island": { "score": 60, "updated": "2024", "status": "Partial", "region": "Oceania", "iso": "CXR", "aliases": ["Christmas Island"] },
+    "Cocos (Keeling) Islands": { "score": 60, "updated": "2024", "status": "Partial", "region": "Oceania", "iso": "CCK", "aliases": ["Cocos Islands", "Cocos (Keeling) Islands"] },
+    "New Zealand": { "score": 88, "updated": "2026", "status": "Full", "region": "Oceania", "iso": "NZL", "aliases": ["New Zealand"] },
 
-    "Vanuatu": { "score": 30, "updated": "2024", "status": "Limited", "region": "Melanesia", "iso": "VUT", "aliases": ["Vanuatu"] },
+    "Vanuatu": { "score": 30, "updated": "2024", "status": "Limited", "region": "Oceania", "iso": "VUT", "aliases": ["Vanuatu"] },
 
-    "Guam": { "score": 80, "updated": "2024", "status": "Full", "region": "Micronesia", "iso": "GUM", "aliases": ["Guam"] },
-    "Northern Mariana Islands": { "score": 75, "updated": "2024", "status": "Full", "region": "Micronesia", "iso": "MNP", "aliases": ["Northern Mariana Islands"] },
+    "Guam": { "score": 80, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "GUM", "aliases": ["Guam"] },
+    "Northern Mariana Islands": { "score": 75, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "MNP", "aliases": ["Northern Mariana Islands"] },
 
-    "American Samoa": { "score": 70, "updated": "2024", "status": "Full", "region": "Polynesia", "iso": "ASM", "aliases": ["American Samoa"] },
-    "Pitcairn Islands": { "score": 50, "updated": "2024", "status": "Limited", "region": "Polynesia", "iso": "PCN", "aliases": ["Pitcairn"] },
+    "American Samoa": { "score": 70, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "ASM", "aliases": ["American Samoa"] },
+    "Pitcairn Islands": { "score": 50, "updated": "2024", "status": "Limited", "region": "Oceania", "iso": "PCN", "aliases": ["Pitcairn"] },
 
     "Antarctica": { "score": 20, "updated": "2024", "status": "Limited", "region": "Antarctica", "iso": "ATA", "aliases": ["Antarctica"] }
 }
