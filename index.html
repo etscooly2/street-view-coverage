@@ -17,31 +17,32 @@
         body {
             display: flex;
             height: 100vh;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #a2ded0;
+            color: #222;
             overflow: hidden;
         }
 
         /* Sidebar Styles */
         #sidebar {
             width: 380px;
-            background-color: #1e1e1e;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid #2d2d2d;
+            border-right: 1px solid #ddd;
             z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
         }
 
         .header {
             padding: 20px;
-            background-color: #252525;
-            border-bottom: 1px solid #2d2d2d;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
         }
 
         .header h1 {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #4dabf7;
+            color: #1a73e8;
             margin-bottom: 15px;
         }
 
@@ -52,15 +53,15 @@
         }
 
         .stat-card {
-            background: #1e1e1e;
+            background: #f1f3f4;
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #333;
+            border: 1px solid #e0e0e0;
         }
 
         .stat-card .label {
             font-size: 0.75rem;
-            color: #aaa;
+            color: #5f6368;
             text-transform: uppercase;
         }
 
@@ -68,7 +69,7 @@
             font-size: 1.2rem;
             font-weight: bold;
             margin-top: 4px;
-            color: #fff;
+            color: #202124;
         }
 
         /* Region Filters */
@@ -76,15 +77,15 @@
             display: flex;
             gap: 5px;
             padding: 10px 20px;
-            background: #1e1e1e;
-            border-bottom: 1px solid #2d2d2d;
+            background: #ffffff;
+            border-bottom: 1px solid #eee;
             overflow-x: auto;
         }
 
         .filter-btn {
-            background: #2b2b2b;
-            border: 1px solid #3d3d3d;
-            color: #aaa;
+            background: #f1f3f4;
+            border: 1px solid #dadce0;
+            color: #3c4043;
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 0.75rem;
@@ -94,37 +95,39 @@
         }
 
         .filter-btn:hover, .filter-btn.active {
-            background: #4dabf7;
+            background: #1a73e8;
             color: #fff;
-            border-color: #4dabf7;
+            border-color: #1a73e8;
         }
 
         /* Search Controls */
         .controls {
             padding: 12px 20px;
-            background: #1e1e1e;
-            border-bottom: 1px solid #2d2d2d;
+            background: #ffffff;
+            border-bottom: 1px solid #eee;
         }
 
         .search-box input {
             width: 100%;
             padding: 8px 12px;
-            background: #2b2b2b;
-            border: 1px solid #3d3d3d;
+            background: #f1f3f4;
+            border: 1px solid #dadce0;
             border-radius: 6px;
-            color: #fff;
+            color: #202124;
             outline: none;
             font-size: 0.85rem;
         }
 
         .search-box input:focus {
-            border-color: #4dabf7;
+            border-color: #1a73e8;
+            background: #fff;
         }
 
         #country-list {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
+            background: #f8f9fa;
         }
 
         .country-item {
@@ -133,14 +136,15 @@
             justify-content: space-between;
             padding: 10px 12px;
             margin-bottom: 6px;
-            background: #252525;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .country-item:hover {
-            background: #2c2c2c;
+            background: #f1f3f4;
         }
 
         .country-info {
@@ -151,11 +155,12 @@
         .country-name {
             font-size: 0.9rem;
             font-weight: 500;
+            color: #202124;
         }
 
         .country-subtext {
             font-size: 0.75rem;
-            color: #888;
+            color: #5f6368;
             margin-top: 2px;
         }
 
@@ -171,22 +176,22 @@
         #map {
             flex: 1;
             height: 100%;
-            background: #0e0e0e;
+            background: #a2ded0;
         }
 
         /* Custom Leaflet Tooltip */
         .leaflet-tooltip-custom {
-            background: rgba(30, 30, 30, 0.95) !important;
-            border: 1px solid #444 !important;
-            color: #fff !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid #ccc !important;
+            color: #202124 !important;
             border-radius: 6px !important;
             padding: 8px 12px !important;
             font-size: 0.85rem !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
         }
 
         .leaflet-tooltip-custom strong {
-            color: #4dabf7;
+            color: #1a73e8;
         }
     </style>
 </head>
@@ -295,84 +300,78 @@
             "Botswana": { "score": 40, "status": "Partial", "region": "Southern Africa", "iso": "BWA", "aliases": ["Botswana"] },
             "Namibia": { "score": 40, "status": "Partial", "region": "Southern Africa", "iso": "NAM", "aliases": ["Namibia"] },
 
-            "Austria": { "score": 75, "status": "Full", "region": "Western Europe", "iso": "AUT", "aliases": ["Austria"] },
-            "Belgium": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "BEL", "aliases": ["Belgium"] },
-            "France": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "FRA", "aliases": ["France"] },
-            "Germany": { "score": 75, "status": "Full", "region": "Western Europe", "iso": "DEU", "aliases": ["Germany"] },
-            "Liechtenstein": { "score": 80, "status": "Full", "region": "Western Europe", "iso": "LIE", "aliases": ["Liechtenstein"] },
-            "Luxembourg": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "LUX", "aliases": ["Luxembourg"] },
-            "Monaco": { "score": 98, "status": "Full", "region": "Western Europe", "iso": "MCO", "aliases": ["Monaco"] },
-            "Netherlands": { "score": 95, "status": "Full", "region": "Western Europe", "iso": "NLD", "aliases": ["Netherlands"] },
-            "Switzerland": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "CHE", "aliases": ["Switzerland"] },
+            "Austria": { "score": 75, "status": "Full", "region": "Europe", "iso": "AUT", "aliases": ["Austria"] },
+            "Belgium": { "score": 90, "status": "Full", "region": "Europe", "iso": "BEL", "aliases": ["Belgium"] },
+            "France": { "score": 90, "status": "Full", "region": "Europe", "iso": "FRA", "aliases": ["France"] },
+            "Germany": { "score": 75, "status": "Full", "region": "Europe", "iso": "DEU", "aliases": ["Germany"] },
+            "Liechtenstein": { "score": 80, "status": "Full", "region": "Europe", "iso": "LIE", "aliases": ["Liechtenstein"] },
+            "Luxembourg": { "score": 90, "status": "Full", "region": "Europe", "iso": "LUX", "aliases": ["Luxembourg"] },
+            "Monaco": { "score": 98, "status": "Full", "region": "Europe", "iso": "MCO", "aliases": ["Monaco"] },
+            "Netherlands": { "score": 95, "status": "Full", "region": "Europe", "iso": "NLD", "aliases": ["Netherlands"] },
+            "Switzerland": { "score": 90, "status": "Full", "region": "Europe", "iso": "CHE", "aliases": ["Switzerland"] },
+            "Denmark": { "score": 92, "status": "Full", "region": "Europe", "iso": "DNK", "aliases": ["Denmark"] },
+            "Estonia": { "score": 90, "status": "Full", "region": "Europe", "iso": "EST", "aliases": ["Estonia"] },
+            "Faroe Islands": { "score": 80, "status": "Full", "region": "Europe", "iso": "FRO", "aliases": ["Faroe Islands"] },
+            "Finland": { "score": 88, "status": "Full", "region": "Europe", "iso": "FIN", "aliases": ["Finland"] },
+            "Iceland": { "score": 75, "status": "Full", "region": "Europe", "iso": "ISL", "aliases": ["Iceland"] },
+            "Ireland": { "score": 88, "status": "Full", "region": "Europe", "iso": "IRL", "aliases": ["Ireland"] },
+            "Isle of Man": { "score": 80, "status": "Full", "region": "Europe", "iso": "IMN", "aliases": ["Isle of Man"] },
+            "Jersey": { "score": 85, "status": "Full", "region": "Europe", "iso": "JEY", "aliases": ["Jersey"] },
+            "Latvia": { "score": 85, "status": "Full", "region": "Europe", "iso": "LVA", "aliases": ["Latvia"] },
+            "Lithuania": { "score": 85, "status": "Full", "region": "Europe", "iso": "LTU", "aliases": ["Lithuania"] },
+            "Norway": { "score": 85, "status": "Full", "region": "Europe", "iso": "NOR", "aliases": ["Norway"] },
+            "Sweden": { "score": 88, "status": "Full", "region": "Europe", "iso": "SWE", "aliases": ["Sweden"] },
+            "United Kingdom": { "score": 95, "status": "Full", "region": "Europe", "iso": "GBR", "aliases": ["United Kingdom", "UK"] },
+            "Albania": { "score": 55, "status": "Partial", "region": "Europe", "iso": "ALB", "aliases": ["Albania"] },
+            "Andorra": { "score": 95, "status": "Full", "region": "Europe", "iso": "AND", "aliases": ["Andorra"] },
+            "Bosnia and Herzegovina": { "score": 75, "status": "Partial", "region": "Europe", "iso": "BIH", "aliases": ["Bosnia and Herzegovina", "Bosnia"] },
+            "Croatia": { "score": 85, "status": "Full", "region": "Europe", "iso": "HRV", "aliases": ["Croatia"] },
+            "Gibraltar": { "score": 85, "status": "Full", "region": "Europe", "iso": "GIB", "aliases": ["Gibraltar"] },
+            "Greece": { "score": 82, "status": "Full", "region": "Europe", "iso": "GRC", "aliases": ["Greece"] },
+            "Italy": { "score": 88, "status": "Full", "region": "Europe", "iso": "ITA", "aliases": ["Italy"] },
+            "Malta": { "score": 92, "status": "Full", "region": "Europe", "iso": "MLT", "aliases": ["Malta"] },
+            "Montenegro": { "score": 65, "status": "Partial", "region": "Europe", "iso": "MNE", "aliases": ["Montenegro"] },
+            "North Macedonia": { "score": 60, "status": "Partial", "region": "Europe", "iso": "MKD", "aliases": ["North Macedonia", "Macedonia"] },
+            "Portugal": { "score": 90, "status": "Full", "region": "Europe", "iso": "PRT", "aliases": ["Portugal"] },
+            "San Marino": { "score": 95, "status": "Full", "region": "Europe", "iso": "SMR", "aliases": ["San Marino"] },
+            "Serbia": { "score": 70, "status": "Full", "region": "Europe", "iso": "SRB", "aliases": ["Serbia"] },
+            "Slovenia": { "score": 85, "status": "Full", "region": "Europe", "iso": "SVN", "aliases": ["Slovenia"] },
+            "Spain": { "score": 92, "status": "Full", "region": "Europe", "iso": "ESP", "aliases": ["Spain"] },
+            "Bulgaria": { "score": 80, "status": "Full", "region": "Europe", "iso": "BGR", "aliases": ["Bulgaria"] },
+            "Czechia": { "score": 88, "status": "Full", "region": "Europe", "iso": "CZE", "aliases": ["Czech Republic", "Czechia"] },
+            "Hungary": { "score": 85, "status": "Full", "region": "Europe", "iso": "HUN", "aliases": ["Hungary"] },
+            "Poland": { "score": 88, "status": "Full", "region": "Europe", "iso": "POL", "aliases": ["Poland"] },
+            "Romania": { "score": 82, "status": "Full", "region": "Europe", "iso": "ROU", "aliases": ["Romania"] },
+            "Russia": { "score": 50, "status": "Partial", "region": "Europe", "iso": "RUS", "aliases": ["Russia"] },
+            "Slovakia": { "score": 85, "status": "Full", "region": "Europe", "iso": "SVK", "aliases": ["Slovakia"] },
+            "Ukraine": { "score": 45, "status": "Partial", "region": "Europe", "iso": "UKR", "aliases": ["Ukraine"] },
+            "Belarus": { "score": 10, "status": "Landmark", "region": "Europe", "iso": "BLR", "aliases": ["Belarus"] },
 
-            "Denmark": { "score": 92, "status": "Full", "region": "Northern Europe", "iso": "DNK", "aliases": ["Denmark"] },
-            "Estonia": { "score": 90, "status": "Full", "region": "Northern Europe", "iso": "EST", "aliases": ["Estonia"] },
-            "Faroe Islands": { "score": 80, "status": "Full", "region": "Northern Europe", "iso": "FRO", "aliases": ["Faroe Islands"] },
-            "Finland": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "FIN", "aliases": ["Finland"] },
-            "Iceland": { "score": 75, "status": "Full", "region": "Northern Europe", "iso": "ISL", "aliases": ["Iceland"] },
-            "Ireland": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "IRL", "aliases": ["Ireland"] },
-            "Isle of Man": { "score": 80, "status": "Full", "region": "Northern Europe", "iso": "IMN", "aliases": ["Isle of Man"] },
-            "Jersey": { "score": 85, "status": "Full", "region": "Northern Europe", "iso": "JEY", "aliases": ["Jersey"] },
-            "Latvia": { "score": 85, "status": "Full", "region": "Northern Europe", "iso": "LVA", "aliases": ["Latvia"] },
-            "Lithuania": { "score": 85, "status": "Full", "region": "Northern Europe", "iso": "LTU", "aliases": ["Lithuania"] },
-            "Norway": { "score": 85, "status": "Full", "region": "Northern Europe", "iso": "NOR", "aliases": ["Norway"] },
-            "Sweden": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "SWE", "aliases": ["Sweden"] },
-            "United Kingdom": { "score": 95, "status": "Full", "region": "Northern Europe", "iso": "GBR", "aliases": ["United Kingdom", "UK"] },
-
-            "Albania": { "score": 55, "status": "Partial", "region": "Southern Europe", "iso": "ALB", "aliases": ["Albania"] },
-            "Andorra": { "score": 95, "status": "Full", "region": "Southern Europe", "iso": "AND", "aliases": ["Andorra"] },
-            "Bosnia and Herzegovina": { "score": 75, "status": "Partial", "region": "Southern Europe", "iso": "BIH", "aliases": ["Bosnia and Herzegovina", "Bosnia"] },
-            "Croatia": { "score": 85, "status": "Full", "region": "Southern Europe", "iso": "HRV", "aliases": ["Croatia"] },
-            "Gibraltar": { "score": 85, "status": "Full", "region": "Southern Europe", "iso": "GIB", "aliases": ["Gibraltar"] },
-            "Greece": { "score": 82, "status": "Full", "region": "Southern Europe", "iso": "GRC", "aliases": ["Greece"] },
-            "Italy": { "score": 88, "status": "Full", "region": "Southern Europe", "iso": "ITA", "aliases": ["Italy"] },
-            "Malta": { "score": 92, "status": "Full", "region": "Southern Europe", "iso": "MLT", "aliases": ["Malta"] },
-            "Montenegro": { "score": 65, "status": "Partial", "region": "Southern Europe", "iso": "MNE", "aliases": ["Montenegro"] },
-            "North Macedonia": { "score": 60, "status": "Partial", "region": "Southern Europe", "iso": "MKD", "aliases": ["North Macedonia", "Macedonia"] },
-            "Portugal": { "score": 90, "status": "Full", "region": "Southern Europe", "iso": "PRT", "aliases": ["Portugal"] },
-            "San Marino": { "score": 95, "status": "Full", "region": "Southern Europe", "iso": "SMR", "aliases": ["San Marino"] },
-            "Serbia": { "score": 70, "status": "Full", "region": "Southern Europe", "iso": "SRB", "aliases": ["Serbia"] },
-            "Slovenia": { "score": 85, "status": "Full", "region": "Southern Europe", "iso": "SVN", "aliases": ["Slovenia"] },
-            "Spain": { "score": 92, "status": "Full", "region": "Southern Europe", "iso": "ESP", "aliases": ["Spain"] },
-
-            "Bulgaria": { "score": 80, "status": "Full", "region": "Eastern Europe", "iso": "BGR", "aliases": ["Bulgaria"] },
-            "Czechia": { "score": 88, "status": "Full", "region": "Eastern Europe", "iso": "CZE", "aliases": ["Czech Republic", "Czechia"] },
-            "Hungary": { "score": 85, "status": "Full", "region": "Eastern Europe", "iso": "HUN", "aliases": ["Hungary"] },
-            "Poland": { "score": 88, "status": "Full", "region": "Eastern Europe", "iso": "POL", "aliases": ["Poland"] },
-            "Romania": { "score": 82, "status": "Full", "region": "Eastern Europe", "iso": "ROU", "aliases": ["Romania"] },
-            "Russia": { "score": 50, "status": "Partial", "region": "Eastern Europe", "iso": "RUS", "aliases": ["Russia"] },
-            "Slovakia": { "score": 85, "status": "Full", "region": "Eastern Europe", "iso": "SVK", "aliases": ["Slovakia"] },
-            "Ukraine": { "score": 45, "status": "Partial", "region": "Eastern Europe", "iso": "UKR", "aliases": ["Ukraine"] },
-            "Belarus": { "score": 10, "status": "Landmark", "region": "Eastern Europe", "iso": "BLR", "aliases": ["Belarus"] },
-
-            "Bermuda": { "score": 80, "status": "Full", "region": "North America", "iso": "BMU", "aliases": ["Bermuda"] },
-            "Canada": { "score": 85, "status": "Full", "region": "North America", "iso": "CAN", "aliases": ["Canada"] },
-            "Greenland": { "score": 30, "status": "Limited", "region": "North America", "iso": "GRL", "aliases": ["Greenland"] },
-            "United States": { "score": 95, "status": "Full", "region": "North America", "iso": "USA", "aliases": ["United States of America", "USA", "US", "United States"] },
-            "St. Pierre and Miquelon": { "score": 40, "status": "Limited", "region": "North America", "iso": "SPM", "aliases": ["St. Pierre and Miquelon"] },
-
-            "Costa Rica": { "score": 55, "status": "Partial", "region": "Central America", "iso": "CRI", "aliases": ["Costa Rica"] },
-            "Guatemala": { "score": 40, "status": "Partial", "region": "Central America", "iso": "GTM", "aliases": ["Guatemala"] },
-            "Mexico": { "score": 75, "status": "Full", "region": "Central America", "iso": "MEX", "aliases": ["Mexico"] },
-            "Panama": { "score": 45, "status": "Partial", "region": "Central America", "iso": "PAN", "aliases": ["Panama"] },
-
-            "Curaçao": { "score": 70, "status": "Partial", "region": "Caribbean", "iso": "CUW", "aliases": ["Curacao", "Curaçao"] },
-            "Dominican Republic": { "score": 50, "status": "Partial", "region": "Caribbean", "iso": "DOM", "aliases": ["Dominican Republic"] },
-            "Puerto Rico": { "score": 85, "status": "Full", "region": "Caribbean", "iso": "PRI", "aliases": ["Puerto Rico"] },
-            "US Virgin Islands": { "score": 75, "status": "Full", "region": "Caribbean", "iso": "VIR", "aliases": ["U.S. Virgin Islands", "US Virgin Islands"] },
-            "Martinique": { "score": 75, "status": "Full", "region": "Caribbean", "iso": "MTQ", "aliases": ["Martinique"] },
-
-            "Argentina": { "score": 70, "status": "Full", "region": "South America", "iso": "ARG", "aliases": ["Argentina"] },
-            "Bolivia": { "score": 35, "status": "Limited", "region": "South America", "iso": "BOL", "aliases": ["Bolivia"] },
-            "Brazil": { "score": 70, "status": "Full", "region": "South America", "iso": "BRA", "aliases": ["Brazil"] },
-            "Chile": { "score": 75, "status": "Full", "region": "South America", "iso": "CHL", "aliases": ["Chile"] },
-            "Colombia": { "score": 60, "status": "Full", "region": "South America", "iso": "COL", "aliases": ["Colombia"] },
-            "Ecuador": { "score": 45, "status": "Partial", "region": "South America", "iso": "ECU", "aliases": ["Ecuador"] },
-            "Paraguay": { "score": 40, "status": "Partial", "region": "South America", "iso": "PRY", "aliases": ["Paraguay"] },
-            "Peru": { "score": 55, "status": "Partial", "region": "South America", "iso": "PER", "aliases": ["Peru"] },
-            "Uruguay": { "score": 65, "status": "Partial", "region": "South America", "iso": "URY", "aliases": ["Uruguay"] },
-            "Falkland Islands": { "score": 40, "status": "Limited", "region": "South America", "iso": "FLK", "aliases": ["Falkland Islands"] },
-            "South Georgia and the South Sandwich Islands": { "score": 30, "status": "Limited", "region": "South America", "iso": "SGS", "aliases": ["South Georgia and the South Sandwich Islands"] },
+            "Bermuda": { "score": 80, "status": "Full", "region": "Americas", "iso": "BMU", "aliases": ["Bermuda"] },
+            "Canada": { "score": 85, "status": "Full", "region": "Americas", "iso": "CAN", "aliases": ["Canada"] },
+            "Greenland": { "score": 30, "status": "Limited", "region": "Americas", "iso": "GRL", "aliases": ["Greenland"] },
+            "United States": { "score": 95, "status": "Full", "region": "Americas", "iso": "USA", "aliases": ["United States of America", "USA", "US", "United States"] },
+            "St. Pierre and Miquelon": { "score": 40, "status": "Limited", "region": "Americas", "iso": "SPM", "aliases": ["St. Pierre and Miquelon"] },
+            "Costa Rica": { "score": 55, "status": "Partial", "region": "Americas", "iso": "CRI", "aliases": ["Costa Rica"] },
+            "Guatemala": { "score": 40, "status": "Partial", "region": "Americas", "iso": "GTM", "aliases": ["Guatemala"] },
+            "Mexico": { "score": 75, "status": "Full", "region": "Americas", "iso": "MEX", "aliases": ["Mexico"] },
+            "Panama": { "score": 45, "status": "Partial", "region": "Americas", "iso": "PAN", "aliases": ["Panama"] },
+            "Curaçao": { "score": 70, "status": "Partial", "region": "Americas", "iso": "CUW", "aliases": ["Curacao", "Curaçao"] },
+            "Dominican Republic": { "score": 50, "status": "Partial", "region": "Americas", "iso": "DOM", "aliases": ["Dominican Republic"] },
+            "Puerto Rico": { "score": 85, "status": "Full", "region": "Americas", "iso": "PRI", "aliases": ["Puerto Rico"] },
+            "US Virgin Islands": { "score": 75, "status": "Full", "region": "Americas", "iso": "VIR", "aliases": ["U.S. Virgin Islands", "US Virgin Islands"] },
+            "Martinique": { "score": 75, "status": "Full", "region": "Americas", "iso": "MTQ", "aliases": ["Martinique"] },
+            "Argentina": { "score": 70, "status": "Full", "region": "Americas", "iso": "ARG", "aliases": ["Argentina"] },
+            "Bolivia": { "score": 35, "status": "Limited", "region": "Americas", "iso": "BOL", "aliases": ["Bolivia"] },
+            "Brazil": { "score": 70, "status": "Full", "region": "Americas", "iso": "BRA", "aliases": ["Brazil"] },
+            "Chile": { "score": 75, "status": "Full", "region": "Americas", "iso": "CHL", "aliases": ["Chile"] },
+            "Colombia": { "score": 60, "status": "Full", "region": "Americas", "iso": "COL", "aliases": ["Colombia"] },
+            "Ecuador": { "score": 45, "status": "Partial", "region": "Americas", "iso": "ECU", "aliases": ["Ecuador"] },
+            "Paraguay": { "score": 40, "status": "Partial", "region": "Americas", "iso": "PRY", "aliases": ["Paraguay"] },
+            "Peru": { "score": 55, "status": "Partial", "region": "Americas", "iso": "PER", "aliases": ["Peru"] },
+            "Uruguay": { "score": 65, "status": "Partial", "region": "Americas", "iso": "URY", "aliases": ["Uruguay"] },
+            "Falkland Islands": { "score": 40, "status": "Limited", "region": "Americas", "iso": "FLK", "aliases": ["Falkland Islands"] },
+            "South Georgia and the South Sandwich Islands": { "score": 30, "status": "Limited", "region": "Americas", "iso": "SGS", "aliases": ["South Georgia and the South Sandwich Islands"] },
 
             "Australia": { "score": 90, "status": "Full", "region": "Oceania", "iso": "AUS", "aliases": ["Australia"] },
             "Christmas Island": { "score": 60, "status": "Partial", "region": "Oceania", "iso": "CXR", "aliases": ["Christmas Island"] },
@@ -402,32 +401,18 @@
             maxBounds: [[-90, -180], [90, 180]]
         });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
             subdomains: 'abcd',
             maxZoom: 19
         }).addTo(map);
-
-        // Fallback embedded minimal low-res world boundaries so it never fails to load on GitHub pages due to CORS/network blocks
-        const fallbackGeoJson = {
-            "type": "FeatureCollection",
-            "features": Object.keys(countryData).map(countryName => {
-                return {
-                    "type": "Feature",
-                    "properties": { "name": countryName, "ADMIN": countryName },
-                    "geometry": { "type": "Polygon", "coordinates": [] }
-                };
-            })
-        };
 
         async function initApp() {
             updateStats();
             renderCountryList();
 
             try {
-                // Use a reliable CDN endpoint or fetch geojson with error fallback
-                const response = await fetch('https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson');
-                if (!response.ok) throw new Error('Network response was not ok');
+                const response = await fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json');
                 const geoData = await response.json();
 
                 geojsonLayer = L.geoJson(geoData, {
@@ -435,24 +420,14 @@
                     onEachFeature: onEachFeature
                 }).addTo(map);
             } catch (err) {
-                console.warn("Falling back to alternative boundary loader...", err);
-                try {
-                    const fallbackResp = await fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json');
-                    const fallbackData = await fallbackResp.json();
-                    geojsonLayer = L.geoJson(fallbackData, {
-                        style: styleFeature,
-                        onEachFeature: onEachFeature
-                    }).addTo(map);
-                } catch (e) {
-                    console.error("Critical layout load error", e);
-                }
+                console.error("Error loading map shapes:", err);
             }
         }
 
         function findCountryData(feature) {
             const props = feature.properties || {};
-            const name = props.name || props.ADMIN || props.name_long || '';
-            const id = feature.id || props.iso_a3 || props.ISO_A3 || props.adm0_a3 || '';
+            const name = props.name || props.ADMIN || '';
+            const id = feature.id || props.iso_a3 || props.ISO_A3 || '';
 
             if (countryData[name]) return countryData[name];
 
@@ -468,18 +443,18 @@
             const data = findCountryData(feature);
             if (!data) {
                 return {
-                    fillColor: '#1a1a1a',
+                    fillColor: '#ffffff',
                     weight: 1,
                     opacity: 1,
-                    color: '#2a2a2a',
-                    fillOpacity: 0.4
+                    color: '#d0d7de',
+                    fillOpacity: 0.6
                 };
             }
             return {
                 fillColor: getColor(data.score),
                 weight: 1,
                 opacity: 1,
-                color: '#1e1e1e',
+                color: '#ffffff',
                 fillOpacity: 0.75
             };
         }
@@ -489,7 +464,7 @@
             const data = findCountryData(layer.feature);
             if (!data) return;
 
-            layer.setStyle({ weight: 2, color: '#ffffff', fillOpacity: 0.95 });
+            layer.setStyle({ weight: 2, color: '#1a73e8', fillOpacity: 0.9 });
             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                 layer.bringToFront();
             }
@@ -502,7 +477,7 @@
         function onEachFeature(feature, layer) {
             const data = findCountryData(feature);
             const props = feature.properties || {};
-            const name = props.name || props.ADMIN || props.name_long || 'Unknown';
+            const name = props.name || props.ADMIN || 'Unknown';
 
             if (!data) {
                 layer.bindTooltip(`<strong>${name}</strong><br/>No Data`, { className: 'leaflet-tooltip-custom', sticky: true });
@@ -527,7 +502,7 @@
 
             const entries = Object.entries(countryData)
                 .filter(([name, data]) => {
-                    const matchesRegion = currentRegionFilter === 'All' || data.region.includes(currentRegionFilter);
+                    const matchesRegion = currentRegionFilter === 'All' || data.region === currentRegionFilter;
                     const searchStr = filterText.toLowerCase();
                     const nameMatch = name.toLowerCase().includes(searchStr);
                     const aliasMatch = data.aliases && data.aliases.some(a => a.toLowerCase().includes(searchStr));
@@ -578,7 +553,7 @@
             if (!geojsonLayer) return;
             geojsonLayer.eachLayer(layer => {
                 const props = layer.feature.properties || {};
-                const name = props.name || props.ADMIN || props.name_long || '';
+                const name = props.name || props.ADMIN || '';
                 const data = findCountryData(layer.feature);
                 if (data && (name === countryName || countryData[countryName] === data)) {
                     map.fitBounds(layer.getBounds());
