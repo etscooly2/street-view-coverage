@@ -231,7 +231,6 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Integrated dataset to prevent local browser CORS fetch errors
         const countryData = {
             "Japan": { "score": 95, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "JPN", "aliases": ["Japan"] },
             "Hong Kong": { "score": 85, "updated": "2024", "status": "Full", "region": "East Asia", "iso": "HKG", "aliases": ["Hong Kong"] },
@@ -239,7 +238,7 @@
             "Mongolia": { "score": 35, "updated": "2024", "status": "Limited", "region": "East Asia", "iso": "MNG", "aliases": ["Mongolia"] },
             "South Korea": { "score": 85, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "KOR", "aliases": ["South Korea", "Korea"] },
             "Taiwan": { "score": 90, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "TWN", "aliases": ["Taiwan"] },
-            "China": { "score": 10, "updated": "2026", "status": "Landmark", "region": "East Asia", "iso": "CHN", "aliases": ["China"] },
+            "China": { "score": 10, "updated": "2026", "status": "Landmark", "region": "East Asia", "iso": "CHN", "aliases": ["China", "People's Republic of China"] },
 
             "Cambodia": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southeast Asia", "iso": "KHM", "aliases": ["Cambodia"] },
             "Indonesia": { "score": 65, "updated": "2026", "status": "Partial", "region": "Southeast Asia", "iso": "IDN", "aliases": ["Indonesia"] },
@@ -349,7 +348,7 @@
             "Bermuda": { "score": 80, "updated": "2024", "status": "Full", "region": "North America", "iso": "BMU", "aliases": ["Bermuda"] },
             "Canada": { "score": 85, "updated": "2026", "status": "Full", "region": "North America", "iso": "CAN", "aliases": ["Canada"] },
             "Greenland": { "score": 30, "updated": "2024", "status": "Limited", "region": "North America", "iso": "GRL", "aliases": ["Greenland"] },
-            "United States": { "score": 95, "updated": "2026", "status": "Full", "region": "North America", "iso": "USA", "aliases": ["United States of America", "USA", "US"] },
+            "United States": { "score": 95, "updated": "2026", "status": "Full", "region": "North America", "iso": "USA", "aliases": ["United States of America", "USA", "US", "United States"] },
             "St. Pierre and Miquelon": { "score": 40, "updated": "2024", "status": "Limited", "region": "North America", "iso": "SPM", "aliases": ["St. Pierre and Miquelon"] },
 
             "Costa Rica": { "score": 55, "updated": "2025", "status": "Partial", "region": "Central America", "iso": "CRI", "aliases": ["Costa Rica"] },
@@ -427,13 +426,15 @@
         }
 
         function findCountryData(feature) {
-            const name = feature.properties.name;
-            const id = feature.id || feature.properties.iso_a3 || feature.properties.ISO_A3;
+            const props = feature.properties || {};
+            // Johan's geo.json uses 'name' or 'ADMIN' depending on the entry
+            const name = props.name || props.ADMIN || '';
+            const id = feature.id || props.iso_a3 || props.ISO_A3 || '';
 
             if (countryData[name]) return countryData[name];
 
             for (const [key, val] of Object.entries(countryData)) {
-                if (val.iso === id || (val.aliases && val.aliases.some(alias => alias.toLowerCase() === name.toLowerCase()))) {
+                if (val.iso === id || key.toLowerCase() === name.toLowerCase() || (val.aliases && val.aliases.some(alias => alias.toLowerCase() === name.toLowerCase()))) {
                     return val;
                 }
             }
@@ -443,7 +444,13 @@
         function styleFeature(feature) {
             const data = findCountryData(feature);
             if (!data) {
-                return { fillColor: 'transparent', weight: 0, opacity: 0, fillOpacity: 0 };
+                return {
+                    fillColor: '#1a1a1a',
+                    weight: 1,
+                    opacity: 1,
+                    color: '#2a2a2a',
+                    fillOpacity: 0.5
+                };
             }
             return {
                 fillColor: getColor(data.score),
@@ -471,12 +478,17 @@
 
         function onEachFeature(feature, layer) {
             const data = findCountryData(feature);
+            const props = feature.properties || {};
+            const name = props.name || props.ADMIN || 'Unknown';
+
             if (!data) {
-                layer.setStyle({ fillOpacity: 0, weight: 0, opacity: 0 });
+                layer.bindTooltip(
+                    `<strong>${name}</strong><br/>Coverage: None / Not Tracked`,
+                    { className: 'leaflet-tooltip-custom', sticky: true }
+                );
                 return;
             }
 
-            const name = feature.properties.name;
             layer.bindTooltip(
                 `<strong>${name}</strong><br/>Coverage: ${data.score}% (${data.status})`,
                 { className: 'leaflet-tooltip-custom', sticky: true }
@@ -545,7 +557,8 @@
         function focusCountryOnMap(countryName) {
             if (!geojsonLayer) return;
             geojsonLayer.eachLayer(layer => {
-                const name = layer.feature.properties.name;
+                const props = layer.feature.properties || {};
+                const name = props.name || props.ADMIN || '';
                 const data = findCountryData(layer.feature);
                 if (data && (name === countryName || countryData[countryName] === data)) {
                     map.fitBounds(layer.getBounds());
