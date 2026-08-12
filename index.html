@@ -194,10 +194,10 @@
 
     <div id="sidebar">
         <div class="header">
-            <h1>Street View Coverage Tracker</h1>
+            <h1>Street View Tracker</h1>
             <div class="stats-summary">
                 <div class="stat-card">
-                    <div class="label">Locations Tracked</div>
+                    <div class="label">Locations</div>
                     <div class="value" id="stat-total">0</div>
                 </div>
                 <div class="stat-card">
@@ -219,7 +219,7 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search country or territory..." oninput="filterCountries()">
+                <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
             </div>
         </div>
 
@@ -232,158 +232,51 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const countryData = {
-            "Japan": { "score": 95, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "JPN", "aliases": ["Japan"] },
-            "Hong Kong": { "score": 85, "updated": "2024", "status": "Full", "region": "East Asia", "iso": "HKG", "aliases": ["Hong Kong"] },
-            "Macao": { "score": 80, "updated": "2024", "status": "Full", "region": "East Asia", "iso": "MAC", "aliases": ["Macao", "Macau"] },
-            "Mongolia": { "score": 35, "updated": "2024", "status": "Limited", "region": "East Asia", "iso": "MNG", "aliases": ["Mongolia"] },
-            "South Korea": { "score": 85, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "KOR", "aliases": ["South Korea", "Korea"] },
-            "Taiwan": { "score": 90, "updated": "2026", "status": "Full", "region": "East Asia", "iso": "TWN", "aliases": ["Taiwan"] },
-            "China": { "score": 10, "updated": "2026", "status": "Landmark", "region": "East Asia", "iso": "CHN", "aliases": ["China", "People's Republic of China"] },
-
-            "Cambodia": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southeast Asia", "iso": "KHM", "aliases": ["Cambodia"] },
-            "Indonesia": { "score": 65, "updated": "2026", "status": "Partial", "region": "Southeast Asia", "iso": "IDN", "aliases": ["Indonesia"] },
-            "Laos": { "score": 35, "updated": "2024", "status": "Limited", "region": "Southeast Asia", "iso": "LAO", "aliases": ["Laos"] },
-            "Malaysia": { "score": 75, "updated": "2026", "status": "Full", "region": "Southeast Asia", "iso": "MYS", "aliases": ["Malaysia"] },
-            "Philippines": { "score": 60, "updated": "2026", "status": "Partial", "region": "Southeast Asia", "iso": "PHL", "aliases": ["Philippines"] },
-            "Singapore": { "score": 98, "updated": "2026", "status": "Full", "region": "Southeast Asia", "iso": "SGP", "aliases": ["Singapore"] },
-            "Thailand": { "score": 80, "updated": "2026", "status": "Full", "region": "Southeast Asia", "iso": "THA", "aliases": ["Thailand"] },
-            "Vietnam": { "score": 30, "updated": "2025", "status": "Partial", "region": "Southeast Asia", "iso": "VNM", "aliases": ["Vietnam"] },
-
-            "Bangladesh": { "score": 45, "updated": "2025", "status": "Partial", "region": "South Asia", "iso": "BGD", "aliases": ["Bangladesh"] },
-            "Bhutan": { "score": 40, "updated": "2024", "status": "Limited", "region": "South Asia", "iso": "BTN", "aliases": ["Bhutan"] },
-            "India": { "score": 55, "updated": "2026", "status": "Partial", "region": "South Asia", "iso": "IND", "aliases": ["India"] },
-            "Nepal": { "score": 25, "updated": "2025", "status": "Limited", "region": "South Asia", "iso": "NPL", "aliases": ["Nepal"] },
-            "Sri Lanka": { "score": 60, "updated": "2025", "status": "Partial", "region": "South Asia", "iso": "LKA", "aliases": ["Sri Lanka"] },
-            "Afghanistan": { "score": 10, "updated": "2026", "status": "Landmark", "region": "South Asia", "iso": "AFG", "aliases": ["Afghanistan"] },
-            "Pakistan": { "score": 10, "updated": "2026", "status": "Landmark", "region": "South Asia", "iso": "PAK", "aliases": ["Pakistan"] },
-
-            "Kazakhstan": { "score": 40, "updated": "2026", "status": "Partial", "region": "Central Asia", "iso": "KAZ", "aliases": ["Kazakhstan"] },
-            "Kyrgyzstan": { "score": 45, "updated": "2025", "status": "Partial", "region": "Central Asia", "iso": "KGZ", "aliases": ["Kyrgyzstan"] },
-
-            "Cyprus": { "score": 70, "updated": "2025", "status": "Partial", "region": "West Asia", "iso": "CYP", "aliases": ["Cyprus"] },
-            "Israel": { "score": 85, "updated": "2026", "status": "Full", "region": "West Asia", "iso": "ISR", "aliases": ["Israel"] },
-            "Jordan": { "score": 40, "updated": "2025", "status": "Partial", "region": "West Asia", "iso": "JOR", "aliases": ["Jordan"] },
-            "Oman": { "score": 35, "updated": "2025", "status": "Partial", "region": "West Asia", "iso": "OMN", "aliases": ["Oman"] },
-            "Palestine": { "score": 30, "updated": "2024", "status": "Limited", "region": "West Asia", "iso": "PSE", "aliases": ["Palestine"] },
-            "Qatar": { "score": 80, "updated": "2026", "status": "Full", "region": "West Asia", "iso": "QAT", "aliases": ["Qatar"] },
-            "Turkey": { "score": 70, "updated": "2026", "status": "Full", "region": "West Asia", "iso": "TUR", "aliases": ["Turkey", "Türkiye"] },
-            "United Arab Emirates": { "score": 75, "updated": "2026", "status": "Full", "region": "West Asia", "iso": "ARE", "aliases": ["United Arab Emirates", "UAE"] },
-            "Georgia": { "score": 45, "updated": "2025", "status": "Partial", "region": "West Asia", "iso": "GEO", "aliases": ["Georgia"] },
-            "Iraq": { "score": 10, "updated": "2026", "status": "Landmark", "region": "West Asia", "iso": "IRQ", "aliases": ["Iraq"] },
-
-            "Tunisia": { "score": 40, "updated": "2025", "status": "Partial", "region": "North Africa", "iso": "TUN", "aliases": ["Tunisia"] },
-            "Egypt": { "score": 10, "updated": "2026", "status": "Landmark", "region": "North Africa", "iso": "EGY", "aliases": ["Egypt"] },
-
-            "São Tomé and Príncipe": { "score": 30, "updated": "2024", "status": "Limited", "region": "Central Africa", "iso": "STP", "aliases": ["Sao Tome and Principe", "São Tomé and Príncipe"] },
-
-            "Ghana": { "score": 40, "updated": "2025", "status": "Partial", "region": "West Africa", "iso": "GHA", "aliases": ["Ghana"] },
-            "Nigeria": { "score": 40, "updated": "2025", "status": "Partial", "region": "West Africa", "iso": "NGA", "aliases": ["Nigeria"] },
-            "Senegal": { "score": 35, "updated": "2025", "status": "Limited", "region": "West Africa", "iso": "SEN", "aliases": ["Senegal"] },
-            "Mali": { "score": 10, "updated": "2026", "status": "Landmark", "region": "West Africa", "iso": "MLI", "aliases": ["Mali"] },
-
-            "Kenya": { "score": 45, "updated": "2025", "status": "Partial", "region": "East Africa", "iso": "KEN", "aliases": ["Kenya"] },
-            "Réunion": { "score": 75, "updated": "2024", "status": "Partial", "region": "East Africa", "iso": "REU", "aliases": ["Reunion", "Réunion"] },
-            "Rwanda": { "score": 35, "updated": "2025", "status": "Limited", "region": "East Africa", "iso": "RWA", "aliases": ["Rwanda"] },
-            "Uganda": { "score": 30, "updated": "2024", "status": "Limited", "region": "East Africa", "iso": "UGA", "aliases": ["Uganda"] },
-            "British Indian Ocean Territory": { "score": 40, "updated": "2024", "status": "Limited", "region": "East Africa", "iso": "IOT", "aliases": ["British Indian Ocean Territory"] },
-            "Madagascar": { "score": 20, "updated": "2024", "status": "Limited", "region": "East Africa", "iso": "MDG", "aliases": ["Madagascar"] },
-            "Tanzania": { "score": 10, "updated": "2026", "status": "Landmark", "region": "East Africa", "iso": "TZA", "aliases": ["Tanzania"] },
-
-            "South Africa": { "score": 65, "updated": "2026", "status": "Full", "region": "Southern Africa", "iso": "ZAF", "aliases": ["South Africa"] },
-            "Lesotho": { "score": 45, "updated": "2024", "status": "Limited", "region": "Southern Africa", "iso": "LSO", "aliases": ["Lesotho"] },
-            "Eswatini": { "score": 45, "updated": "2024", "status": "Limited", "region": "Southern Africa", "iso": "SWZ", "aliases": ["Eswatini", "Swaziland"] },
-            "Botswana": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southern Africa", "iso": "BWA", "aliases": ["Botswana"] },
-            "Namibia": { "score": 40, "updated": "2024", "status": "Partial", "region": "Southern Africa", "iso": "NAM", "aliases": ["Namibia"] },
-
-            "Austria": { "score": 75, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "AUT", "aliases": ["Austria"] },
-            "Belgium": { "score": 90, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "BEL", "aliases": ["Belgium"] },
-            "France": { "score": 90, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "FRA", "aliases": ["France"] },
-            "Germany": { "score": 75, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "DEU", "aliases": ["Germany"] },
-            "Liechtenstein": { "score": 80, "updated": "2025", "status": "Full", "region": "Western Europe", "iso": "LIE", "aliases": ["Liechtenstein"] },
-            "Luxembourg": { "score": 90, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "LUX", "aliases": ["Luxembourg"] },
-            "Monaco": { "score": 98, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "MCO", "aliases": ["Monaco"] },
-            "Netherlands": { "score": 95, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "NLD", "aliases": ["Netherlands"] },
-            "Switzerland": { "score": 90, "updated": "2026", "status": "Full", "region": "Western Europe", "iso": "CHE", "aliases": ["Switzerland"] },
-
-            "Denmark": { "score": 92, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "DNK", "aliases": ["Denmark"] },
-            "Estonia": { "score": 90, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "EST", "aliases": ["Estonia"] },
-            "Faroe Islands": { "score": 80, "updated": "2024", "status": "Full", "region": "Northern Europe", "iso": "FRO", "aliases": ["Faroe Islands"] },
-            "Finland": { "score": 88, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "FIN", "aliases": ["Finland"] },
-            "Iceland": { "score": 75, "updated": "2025", "status": "Full", "region": "Northern Europe", "iso": "ISL", "aliases": ["Iceland"] },
-            "Ireland": { "score": 88, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "IRL", "aliases": ["Ireland"] },
-            "Isle of Man": { "score": 80, "updated": "2024", "status": "Full", "region": "Northern Europe", "iso": "IMN", "aliases": ["Isle of Man"] },
-            "Jersey": { "score": 85, "updated": "2024", "status": "Full", "region": "Northern Europe", "iso": "JEY", "aliases": ["Jersey"] },
-            "Latvia": { "score": 85, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "LVA", "aliases": ["Latvia"] },
-            "Lithuania": { "score": 85, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "LTU", "aliases": ["Lithuania"] },
-            "Norway": { "score": 85, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "NOR", "aliases": ["Norway"] },
-            "Sweden": { "score": 88, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "SWE", "aliases": ["Sweden"] },
-            "United Kingdom": { "score": 95, "updated": "2026", "status": "Full", "region": "Northern Europe", "iso": "GBR", "aliases": ["United Kingdom", "UK"] },
-
-            "Albania": { "score": 55, "updated": "2026", "status": "Partial", "region": "Southern Europe", "iso": "ALB", "aliases": ["Albania"] },
-            "Andorra": { "score": 95, "updated": "2025", "status": "Full", "region": "Southern Europe", "iso": "AND", "aliases": ["Andorra"] },
-            "Bosnia and Herzegovina": { "score": 75, "updated": "2026", "status": "Partial", "region": "Southern Europe", "iso": "BIH", "aliases": ["Bosnia and Herzegovina", "Bosnia"] },
-            "Croatia": { "score": 85, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "HRV", "aliases": ["Croatia"] },
-            "Gibraltar": { "score": 85, "updated": "2024", "status": "Full", "region": "Southern Europe", "iso": "GIB", "aliases": ["Gibraltar"] },
-            "Greece": { "score": 82, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "GRC", "aliases": ["Greece"] },
-            "Italy": { "score": 88, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "ITA", "aliases": ["Italy"] },
-            "Malta": { "score": 92, "updated": "2025", "status": "Full", "region": "Southern Europe", "iso": "MLT", "aliases": ["Malta"] },
-            "Montenegro": { "score": 65, "updated": "2025", "status": "Partial", "region": "Southern Europe", "iso": "MNE", "aliases": ["Montenegro"] },
-            "North Macedonia": { "score": 60, "updated": "2025", "status": "Partial", "region": "Southern Europe", "iso": "MKD", "aliases": ["North Macedonia", "Macedonia"] },
-            "Portugal": { "score": 90, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "PRT", "aliases": ["Portugal"] },
-            "San Marino": { "score": 95, "updated": "2025", "status": "Full", "region": "Southern Europe", "iso": "SMR", "aliases": ["San Marino"] },
-            "Serbia": { "score": 70, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "SRB", "aliases": ["Serbia"] },
-            "Slovenia": { "score": 85, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "SVN", "aliases": ["Slovenia"] },
-            "Spain": { "score": 92, "updated": "2026", "status": "Full", "region": "Southern Europe", "iso": "ESP", "aliases": ["Spain"] },
-
-            "Bulgaria": { "score": 80, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "BGR", "aliases": ["Bulgaria"] },
-            "Czechia": { "score": 88, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "CZE", "aliases": ["Czech Republic", "Czechia"] },
-            "Hungary": { "score": 85, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "HUN", "aliases": ["Hungary"] },
-            "Poland": { "score": 88, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "POL", "aliases": ["Poland"] },
-            "Romania": { "score": 82, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "ROU", "aliases": ["Romania"] },
-            "Russia": { "score": 50, "updated": "2026", "status": "Partial", "region": "Eastern Europe", "iso": "RUS", "aliases": ["Russia"] },
-            "Slovakia": { "score": 85, "updated": "2026", "status": "Full", "region": "Eastern Europe", "iso": "SVK", "aliases": ["Slovakia"] },
-            "Ukraine": { "score": 45, "updated": "2024", "status": "Partial", "region": "Eastern Europe", "iso": "UKR", "aliases": ["Ukraine"] },
-            "Belarus": { "score": 10, "updated": "2026", "status": "Landmark", "region": "Eastern Europe", "iso": "BLR", "aliases": ["Belarus"] },
-
-            "Bermuda": { "score": 80, "updated": "2024", "status": "Full", "region": "North America", "iso": "BMU", "aliases": ["Bermuda"] },
-            "Canada": { "score": 85, "updated": "2026", "status": "Full", "region": "North America", "iso": "CAN", "aliases": ["Canada"] },
-            "Greenland": { "score": 30, "updated": "2024", "status": "Limited", "region": "North America", "iso": "GRL", "aliases": ["Greenland"] },
-            "United States": { "score": 95, "updated": "2026", "status": "Full", "region": "North America", "iso": "USA", "aliases": ["United States of America", "USA", "US", "United States"] },
-            "St. Pierre and Miquelon": { "score": 40, "updated": "2024", "status": "Limited", "region": "North America", "iso": "SPM", "aliases": ["St. Pierre and Miquelon"] },
-
-            "Costa Rica": { "score": 55, "updated": "2025", "status": "Partial", "region": "Central America", "iso": "CRI", "aliases": ["Costa Rica"] },
-            "Guatemala": { "score": 40, "updated": "2025", "status": "Partial", "region": "Central America", "iso": "GTM", "aliases": ["Guatemala"] },
-            "Mexico": { "score": 75, "updated": "2026", "status": "Full", "region": "Central America", "iso": "MEX", "aliases": ["Mexico"] },
-            "Panama": { "score": 45, "updated": "2025", "status": "Partial", "region": "Central America", "iso": "PAN", "aliases": ["Panama"] },
-
-            "Curaçao": { "score": 70, "updated": "2024", "status": "Partial", "region": "Caribbean", "iso": "CUW", "aliases": ["Curacao", "Curaçao"] },
-            "Dominican Republic": { "score": 50, "updated": "2025", "status": "Partial", "region": "Caribbean", "iso": "DOM", "aliases": ["Dominican Republic"] },
-            "Puerto Rico": { "score": 85, "updated": "2026", "status": "Full", "region": "Caribbean", "iso": "PRI", "aliases": ["Puerto Rico"] },
-            "US Virgin Islands": { "score": 75, "updated": "2024", "status": "Full", "region": "Caribbean", "iso": "VIR", "aliases": ["U.S. Virgin Islands", "US Virgin Islands"] },
-            "Martinique": { "score": 75, "updated": "2024", "status": "Full", "region": "Caribbean", "iso": "MTQ", "aliases": ["Martinique"] },
-
-            "Argentina": { "score": 70, "updated": "2026", "status": "Full", "region": "South America", "iso": "ARG", "aliases": ["Argentina"] },
-            "Bolivia": { "score": 35, "updated": "2024", "status": "Limited", "region": "South America", "iso": "BOL", "aliases": ["Bolivia"] },
-            "Brazil": { "score": 70, "updated": "2026", "status": "Full", "region": "South America", "iso": "BRA", "aliases": ["Brazil"] },
-            "Chile": { "score": 75, "updated": "2026", "status": "Full", "region": "South America", "iso": "CHL", "aliases": ["Chile"] },
-            "Colombia": { "score": 60, "updated": "2025", "status": "Full", "region": "South America", "iso": "COL", "aliases": ["Colombia"] },
-            "Ecuador": { "score": 45, "updated": "2025", "status": "Partial", "region": "South America", "iso": "ECU", "aliases": ["Ecuador"] },
-            "Paraguay": { "score": 40, "updated": "2025", "status": "Partial", "region": "South America", "iso": "PRY", "aliases": ["Paraguay"] },
-            "Peru": { "score": 55, "updated": "2025", "status": "Partial", "region": "South America", "iso": "PER", "aliases": ["Peru"] },
-            "Uruguay": { "score": 65, "updated": "2025", "status": "Partial", "region": "South America", "iso": "URY", "aliases": ["Uruguay"] },
-            "Falkland Islands": { "score": 40, "updated": "2024", "status": "Limited", "region": "South America", "iso": "FLK", "aliases": ["Falkland Islands"] },
-            "South Georgia and the South Sandwich Islands": { "score": 30, "updated": "2024", "status": "Limited", "region": "South America", "iso": "SGS", "aliases": ["South Georgia and the South Sandwich Islands"] },
-
-            "Australia": { "score": 90, "updated": "2026", "status": "Full", "region": "Oceania", "iso": "AUS", "aliases": ["Australia"] },
-            "Christmas Island": { "score": 60, "updated": "2024", "status": "Partial", "region": "Oceania", "iso": "CXR", "aliases": ["Christmas Island"] },
-            "Cocos (Keeling) Islands": { "score": 60, "updated": "2024", "status": "Partial", "region": "Oceania", "iso": "CCK", "aliases": ["Cocos Islands", "Cocos (Keeling) Islands"] },
-            "New Zealand": { "score": 88, "updated": "2026", "status": "Full", "region": "Oceania", "iso": "NZL", "aliases": ["New Zealand"] },
-            "Vanuatu": { "score": 30, "updated": "2024", "status": "Limited", "region": "Oceania", "iso": "VUT", "aliases": ["Vanuatu"] },
-            "Guam": { "score": 80, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "GUM", "aliases": ["Guam"] },
-            "Northern Mariana Islands": { "score": 75, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "MNP", "aliases": ["Northern Mariana Islands"] },
-            "American Samoa": { "score": 70, "updated": "2024", "status": "Full", "region": "Oceania", "iso": "ASM", "aliases": ["American Samoa"] },
-            "Pitcairn Islands": { "score": 50, "updated": "2024", "status": "Limited", "region": "Oceania", "iso": "PCN", "aliases": ["Pitcairn"] },
-            "Antarctica": { "score": 20, "updated": "2024", "status": "Limited", "region": "Antarctica", "iso": "ATA", "aliases": ["Antarctica"] }
+            "Japan": { "score": 95, "status": "Full", "region": "East Asia", "iso": "JPN", "aliases": ["Japan"] },
+            "South Korea": { "score": 85, "status": "Full", "region": "East Asia", "iso": "KOR", "aliases": ["South Korea", "Korea"] },
+            "Taiwan": { "score": 90, "status": "Full", "region": "East Asia", "iso": "TWN", "aliases": ["Taiwan"] },
+            "China": { "score": 10, "status": "Landmark", "region": "East Asia", "iso": "CHN", "aliases": ["China"] },
+            "Indonesia": { "score": 65, "status": "Partial", "region": "Southeast Asia", "iso": "IDN", "aliases": ["Indonesia"] },
+            "Malaysia": { "score": 75, "status": "Full", "region": "Southeast Asia", "iso": "MYS", "aliases": ["Malaysia"] },
+            "Philippines": { "score": 60, "status": "Partial", "region": "Southeast Asia", "iso": "PHL", "aliases": ["Philippines"] },
+            "Singapore": { "score": 98, "status": "Full", "region": "Southeast Asia", "iso": "SGP", "aliases": ["Singapore"] },
+            "Thailand": { "score": 80, "status": "Full", "region": "Southeast Asia", "iso": "THA", "aliases": ["Thailand"] },
+            "India": { "score": 55, "status": "Partial", "region": "South Asia", "iso": "IND", "aliases": ["India"] },
+            "Israel": { "score": 85, "status": "Full", "region": "West Asia", "iso": "ISR", "aliases": ["Israel"] },
+            "Turkey": { "score": 70, "status": "Full", "region": "West Asia", "iso": "TUR", "aliases": ["Turkey", "Türkiye"] },
+            "United Arab Emirates": { "score": 75, "status": "Full", "region": "West Asia", "iso": "ARE", "aliases": ["United Arab Emirates", "UAE"] },
+            "South Africa": { "score": 65, "status": "Full", "region": "Southern Africa", "iso": "ZAF", "aliases": ["South Africa"] },
+            "Austria": { "score": 75, "status": "Full", "region": "Western Europe", "iso": "AUT", "aliases": ["Austria"] },
+            "Belgium": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "BEL", "aliases": ["Belgium"] },
+            "France": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "FRA", "aliases": ["France"] },
+            "Germany": { "score": 75, "status": "Full", "region": "Western Europe", "iso": "DEU", "aliases": ["Germany"] },
+            "Netherlands": { "score": 95, "status": "Full", "region": "Western Europe", "iso": "NLD", "aliases": ["Netherlands"] },
+            "Switzerland": { "score": 90, "status": "Full", "region": "Western Europe", "iso": "CHE", "aliases": ["Switzerland"] },
+            "Denmark": { "score": 92, "status": "Full", "region": "Northern Europe", "iso": "DNK", "aliases": ["Denmark"] },
+            "Finland": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "FIN", "aliases": ["Finland"] },
+            "Ireland": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "IRL", "aliases": ["Ireland"] },
+            "Norway": { "score": 85, "status": "Full", "region": "Northern Europe", "iso": "NOR", "aliases": ["Norway"] },
+            "Sweden": { "score": 88, "status": "Full", "region": "Northern Europe", "iso": "SWE", "aliases": ["Sweden"] },
+            "United Kingdom": { "score": 95, "status": "Full", "region": "Northern Europe", "iso": "GBR", "aliases": ["United Kingdom", "UK"] },
+            "Italy": { "score": 88, "status": "Full", "region": "Southern Europe", "iso": "ITA", "aliases": ["Italy"] },
+            "Portugal": { "score": 90, "status": "Full", "region": "Southern Europe", "iso": "PRT", "aliases": ["Portugal"] },
+            "Spain": { "score": 92, "status": "Full", "region": "Southern Europe", "iso": "ESP", "aliases": ["Spain"] },
+            "Greece": { "score": 82, "status": "Full", "region": "Southern Europe", "iso": "GRC", "aliases": ["Greece"] },
+            "Poland": { "score": 88, "status": "Full", "region": "Eastern Europe", "iso": "POL", "aliases": ["Poland"] },
+            "Czechia": { "score": 88, "status": "Full", "region": "Eastern Europe", "iso": "CZE", "aliases": ["Czech Republic", "Czechia"] },
+            "Hungary": { "score": 85, "status": "Full", "region": "Eastern Europe", "iso": "HUN", "aliases": ["Hungary"] },
+            "Romania": { "score": 82, "status": "Full", "region": "Eastern Europe", "iso": "ROU", "aliases": ["Romania"] },
+            "Russia": { "score": 50, "status": "Partial", "region": "Eastern Europe", "iso": "RUS", "aliases": ["Russia"] },
+            "Canada": { "score": 85, "status": "Full", "region": "North America", "iso": "CAN", "aliases": ["Canada"] },
+            "Mexico": { "score": 75, "status": "Full", "region": "Central America", "iso": "MEX", "aliases": ["Mexico"] },
+            "United States": { "score": 95, "status": "Full", "region": "North America", "iso": "USA", "aliases": ["United States of America", "USA", "US", "United States"] },
+            "Argentina": { "score": 70, "status": "Full", "region": "South America", "iso": "ARG", "aliases": ["Argentina"] },
+            "Brazil": { "score": 70, "status": "Full", "region": "South America", "iso": "BRA", "aliases": ["Brazil"] },
+            "Chile": { "score": 75, "status": "Full", "region": "South America", "iso": "CHL", "aliases": ["Chile"] },
+            "Colombia": { "score": 60, "status": "Full", "region": "South America", "iso": "COL", "aliases": ["Colombia"] },
+            "Peru": { "score": 55, "status": "Partial", "region": "South America", "iso": "PER", "aliases": ["Peru"] },
+            "Australia": { "score": 90, "status": "Full", "region": "Oceania", "iso": "AUS", "aliases": ["Australia"] },
+            "New Zealand": { "score": 88, "status": "Full", "region": "Oceania", "iso": "NZL", "aliases": ["New Zealand"] }
         };
 
         let currentRegionFilter = 'All';
@@ -421,13 +314,12 @@
                     onEachFeature: onEachFeature
                 }).addTo(map);
             } catch (err) {
-                console.error("Error loading GeoJSON data:", err);
+                console.error("Error loading map shapes:", err);
             }
         }
 
         function findCountryData(feature) {
             const props = feature.properties || {};
-            // Johan's geo.json uses 'name' or 'ADMIN' depending on the entry
             const name = props.name || props.ADMIN || '';
             const id = feature.id || props.iso_a3 || props.ISO_A3 || '';
 
@@ -449,7 +341,7 @@
                     weight: 1,
                     opacity: 1,
                     color: '#2a2a2a',
-                    fillOpacity: 0.5
+                    fillOpacity: 0.4
                 };
             }
             return {
@@ -482,10 +374,7 @@
             const name = props.name || props.ADMIN || 'Unknown';
 
             if (!data) {
-                layer.bindTooltip(
-                    `<strong>${name}</strong><br/>Coverage: None / Not Tracked`,
-                    { className: 'leaflet-tooltip-custom', sticky: true }
-                );
+                layer.bindTooltip(`<strong>${name}</strong><br/>No Data`, { className: 'leaflet-tooltip-custom', sticky: true });
                 return;
             }
 
