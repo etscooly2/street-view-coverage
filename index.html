@@ -197,7 +197,7 @@
             <h1>Street View Coverage Tracker</h1>
             <div class="stats-summary">
                 <div class="stat-card">
-                    <div class="label">Countries Tracked</div>
+                    <div class="label">Locations Tracked</div>
                     <div class="value" id="stat-total">0</div>
                 </div>
                 <div class="stat-card">
@@ -209,8 +209,9 @@
 
         <div class="region-filters">
             <button class="filter-btn active" onclick="filterByRegion('All')">All</button>
-            <button class="filter-btn" onclick="filterByRegion('Americas')">Americas</button>
+            <button class="filter-btn" onclick="filterByRegion('East Asia')">East Asia</button>
             <button class="filter-btn" onclick="filterByRegion('Europe')">Europe</button>
+            <button class="filter-btn" onclick="filterByRegion('Americas')">Americas</button>
             <button class="filter-btn" onclick="filterByRegion('Asia')">Asia</button>
             <button class="filter-btn" onclick="filterByRegion('Africa')">Africa</button>
             <button class="filter-btn" onclick="filterByRegion('Oceania')">Oceania</button>
@@ -218,7 +219,7 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search country..." oninput="filterCountries()">
+                <input type="text" id="search-input" placeholder="Search country or territory..." oninput="filterCountries()">
             </div>
         </div>
 
@@ -342,7 +343,7 @@
 
             const entries = Object.entries(countryData)
                 .filter(([name, data]) => {
-                    const matchesRegion = currentRegionFilter === 'All' || data.region === currentRegionFilter;
+                    const matchesRegion = currentRegionFilter === 'All' || data.region.includes(currentRegionFilter);
                     const searchStr = filterText.toLowerCase();
                     const nameMatch = name.toLowerCase().includes(searchStr);
                     const aliasMatch = data.aliases && data.aliases.some(a => a.toLowerCase().includes(searchStr));
